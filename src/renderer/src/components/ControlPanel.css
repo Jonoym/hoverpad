@@ -1,0 +1,119 @@
+.control-panel {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.control-panel-container {
+  height: 100%;
+  /* padding: 6px; */
+  gap: 10px;
+}
+
+.control-panel-option {
+  height: 44px;
+  color: var(--color-text);
+  font-size: var(--font-size-normal);
+  font-weight: 100;
+  gap: 10px;
+  border-radius: var(--border-radius-lg);
+  padding: 4px 10px;
+  -webkit-app-region: none;
+  border: none;
+  background: transparent;
+}
+
+.control-panel-icon {
+  font-size: 24px;
+  color: var(--color-text);
+}
+
+.control-panel-option:hover {
+  color: var(--color-text-bright);
+  background: var(--bg-hover);
+}
+
+.control-panel-option:hover .control-panel-icon {
+  color: var(--color-text-bright);
+}
+
+.control-panel-option-active {
+  background: rgba(28, 183, 103, 0.138);
+}
+
+.control-panel-option-inactive {
+  background: rgba(122, 41, 41, 0.15);
+}
+
+.control-panel-option-active:hover {
+  background: rgba(28, 183, 103, 0.24);
+}
+
+.control-panel-option-inactive:hover {
+  background: rgba(163, 32, 32, 0.228);
+}
+
+.control-panel-option .key {
+  background: rgba(40, 44, 52, 0.7);
+}
+
+.control-panel-option:hover .key {
+  background: rgba(40, 44, 52, 0.9);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.slider-container {
+  /* padding: 0 10px; */
+  width: 80px;
+}
+
+.slider {
+  -webkit-appearance: none;
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  background: #7c7c7c;
+}
+
+.slider::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  left: 0;
+  right: calc((100% - (var(--slider-value) * 1%)));
+  background: #b0b0b0;
+  border-radius: var(--border-radius-sm);
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #979797;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #cfcfcf;
+}
+
+.key {
+  font-family: var(--font-primary);
+  font-weight: 100;
+  width: 38px;
+  height: 34px;
+  background-color: rgba(40, 44, 52, 0.2);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-default);
+}

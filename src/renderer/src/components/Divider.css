@@ -1,0 +1,6 @@
+.vertical-divider {
+  width: 0.5px;
+  height: 70%;
+  background-color: rgb(150, 150, 150);
+  opacity: 0.5;
+}
