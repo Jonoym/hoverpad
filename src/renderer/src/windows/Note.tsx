@@ -1,35 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-  MDXEditor,
-  codeBlockPlugin,
-  codeMirrorPlugin,
-  toolbarPlugin,
-  headingsPlugin,
-  tablePlugin,
-  thematicBreakPlugin,
-  linkPlugin,
-  linkDialogPlugin,
-  quotePlugin,
-  InsertTable,
-  listsPlugin,
-  BoldItalicUnderlineToggles,
-  markdownShortcutPlugin,
-  ListsToggle
-} from '@mdxeditor/editor'
-import '@mdxeditor/editor/style.css'
-import Frame from './Frame'
-
 import { LuSave, LuX, LuPenLine } from 'react-icons/lu'
 
-import './Note.css'
-import Divider from './Divider'
+import { Divider, Editor, Frame } from '@renderer/components'
 import { handleClose } from '@renderer/functions'
+
+import './Note.css'
 
 interface NoteProps {
   editable: boolean
 }
 
-const Note: React.FC<NoteProps> = ({ editable }) => {
+function Note({ editable }: NoteProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [isEditable, setIsEditable] = useState<boolean>(editable)
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
@@ -59,9 +40,9 @@ const Note: React.FC<NoteProps> = ({ editable }) => {
 
   return (
     <Frame>
-      <div className="note-container non-draggable">
+      <div className="note-container no-drag">
         <div
-          className={`note-titlebar transition draggable ${isEditable ? '' : 'note-titlebar-inactive'}`}
+          className={`note-titlebar drag transition ${isEditable ? '' : 'note-titlebar-inactive'}`}
         >
           <div className="note-titlebar-title">
             <input
@@ -69,7 +50,7 @@ const Note: React.FC<NoteProps> = ({ editable }) => {
               type="text"
               // value="New nOte"
               readOnly={!isTitleEditable}
-              className={`${isTitleEditable ? '' : 'input-inactive'}`}
+              className={`transition ${isTitleEditable ? '' : 'input-inactive'}`}
               // onChange={(e) => (titleRef.current = e.target.value)}
               onKeyDown={handleTitleKeyDown}
               onBlur={(e) => {
@@ -102,38 +83,7 @@ const Note: React.FC<NoteProps> = ({ editable }) => {
           </div>
         </div>
         <div className="note-content">
-          <MDXEditor
-            className="dark-theme editor"
-            contentEditableClassName="prose"
-            markdown="> This is a quote"
-            // onChange={(value) => setContent(value)}
-            plugins={[
-              headingsPlugin(),
-              linkPlugin(),
-              linkDialogPlugin(),
-              quotePlugin(),
-              listsPlugin(),
-              codeBlockPlugin({ defaultCodeBlockLanguage: 'markdown' }),
-              codeMirrorPlugin({
-                codeBlockLanguages: {
-                  markdown: 'Markdown',
-                  txt: 'Plain Text'
-                }
-              }),
-              thematicBreakPlugin(),
-              tablePlugin(),
-              toolbarPlugin({
-                toolbarContents: () => (
-                  <>
-                    <InsertTable />
-                    <BoldItalicUnderlineToggles />
-                    <ListsToggle />
-                  </>
-                )
-              }),
-              markdownShortcutPlugin()
-            ]}
-          />
+          <Editor />
         </div>
         <div className="note-footer" />
       </div>

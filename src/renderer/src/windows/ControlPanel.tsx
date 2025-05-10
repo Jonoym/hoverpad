@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import Frame from './Frame'
+import Frame from '../components/Frame'
 import './ControlPanel.css'
 import {
   LuPencil,
@@ -13,10 +13,10 @@ import {
   LuX
 } from 'react-icons/lu'
 import { useState } from 'react'
-import Divider from './Divider'
+import Divider from '../components/Divider'
 import { handleClose } from '@renderer/functions'
 
-const ControlPanel = (): React.ReactElement => {
+function ControlPanel() {
   const [opacity, setOpacity] = useState(100)
   const [isEditable, setIsEditable] = useState(true)
 
@@ -33,7 +33,7 @@ const ControlPanel = (): React.ReactElement => {
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const value = Number(e.target.value)
     setOpacity(value)
-    e.target.style.setProperty('--slider-value', `${value}%`)
+    // e.target.style.setProperty('--slider-value', `${value}%`)
 
     window.api.changeOpacity(value / 100)
   }
@@ -57,7 +57,7 @@ const ControlPanel = (): React.ReactElement => {
       <div className="control-panel spaced">
         <div className="control-panel-container centre">
           <button
-            className={`centre control-panel-option transition pointer ${isEditable ? 'control-panel-option-active' : 'control-panel-option-inactive'}`}
+            className={`centre control-panel-option no-drag transition pointer ${isEditable ? 'control-panel-option-active' : 'control-panel-option-inactive'}`}
             onClick={toggleEdit}
           >
             {isEditable ? (
@@ -72,7 +72,10 @@ const ControlPanel = (): React.ReactElement => {
             <span className="centre container key transition">E</span>
           </button>
           <Divider />
-          <button className="centre control-panel-option transition pointer" onClick={toggleHide}>
+          <button
+            className="centre control-panel-option no-drag transition pointer"
+            onClick={toggleHide}
+          >
             <LuEye className="control-panel-icon transition" />
             <span className="centre container key transition">
               {' '}
@@ -82,9 +85,9 @@ const ControlPanel = (): React.ReactElement => {
             <span className="centre container key transition">H</span>
           </button>
           <Divider />
-          <div className="centre control-panel-option transition">
+          <div className="centre control-panel-option no-drag transition">
             <LuSunMoon className="control-panel-icon transition" />
-            <div className="slider-container">
+            <div className="slider-container centre">
               <input
                 type="range"
                 min="20"
@@ -97,7 +100,10 @@ const ControlPanel = (): React.ReactElement => {
             </div>
           </div>
           <Divider />
-          <button className="centre control-panel-option transition pointer" onClick={createNote}>
+          <button
+            className="centre control-panel-option no-drag transition pointer"
+            onClick={createNote}
+          >
             <LuClipboardPlus className="control-panel-icon transition" />
             <span className="centre container key transition">
               {' '}
@@ -107,15 +113,18 @@ const ControlPanel = (): React.ReactElement => {
             <span className="centre container key transition">N</span>
           </button>
           <Divider />
-          <button className="centre control-panel-option transition pointer">
+          <button className="centre control-panel-option no-drag transition pointer">
             <LuFolderSearch className="control-panel-icon transition" />
           </button>
           <Divider />
-          <button className="centre control-panel-option transition pointer">
+          <button className="centre control-panel-option no-drag transition pointer">
             <LuSettings className="control-panel-icon transition" />
           </button>
           <Divider />
-          <button className="centre control-panel-option transition pointer" onClick={handleClose}>
+          <button
+            className="centre control-panel-option no-drag transition pointer"
+            onClick={handleClose}
+          >
             <LuX className="control-panel-icon transition" />
           </button>
         </div>

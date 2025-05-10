@@ -1,0 +1,194 @@
+.mdxeditor-toolbar {
+  margin-left: 1px;
+  border-radius: var(--border-radius-large);
+  background-color: var(--bg-frame-solid);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-default);
+}
+
+.mdxeditor a {
+  color: var(--color-link);
+}
+
+.mdxeditor-root-contenteditable p {
+  font-family: var(--font-primary);
+  line-height: 22px;
+  font-size: var(--font-size-normal);
+}
+
+.mdxeditor-root-contenteditable ul {
+  padding-left: var(--list-padding);
+  font-size: var(--font-size-normal);
+}
+
+.mdxeditor-root-contenteditable ol {
+  padding-left: var(--list-padding);
+  font-size: var(--font-size-normal);
+}
+
+.mdxeditor-root-contenteditable code span {
+  font-family: var(--font-code);
+  border-radius: var(--border-radius-small);
+  padding: var(--padding-small) var(--padding-small);
+  color: var(--color-text-code);
+}
+
+.mdxeditor-root-contenteditable blockquote {
+  font-family: var(--font-primary);
+  margin: var(--padding-medium);
+  padding: var(--padding-medium);
+  padding-left: 16px;
+  font-size: var(--font-size-normal);
+  border-left: 3px solid var(--color-grey-dark);
+}
+
+.mdxeditor [class*='codeMirrorToolbar'] {
+  display: none;
+}
+
+.mdxeditor .cm-editor {
+  caret-color: var(--color-link);
+  background-color: var(--bg-editor);
+  box-shadow: var(--shadow-default);
+  border-radius: var(--border-radius-small);
+  border: var(--border-siz) solid var(--color-border);
+  color: var(--color-text-bright);
+  font-size: var(--font-size-code);
+}
+
+.mdxeditor [class*='codeMirrorWrapper'] {
+  padding: 0;
+  margin-top: var(--padding-large);
+  margin-bottom: var(--padding-large);
+}
+
+.cm-gutterElement {
+  color: var(--color-text-code);
+  font-size: var(--font-size-small);
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+.cm-activeLineGutter {
+  background-color: var(--color-grey-darker) !important;
+}
+
+.c4 .cm-content {
+  caret-color: var(--color-text-code);
+}
+
+.cm-cursor {
+  caret-color: transparent !;
+  width: 2px;
+  background-color: var(--color-text-code);
+  color: transparent;
+  animation: none;
+}
+
+.mdxeditor .cm-editor .cm-content {
+  font-family: var(--font-code);
+}
+
+.mdxeditor-popup-container {
+  background: var(--bg-editor);
+  border: none;
+  box-shadow: none !important;
+}
+
+div[aria-label='editable markdown'] {
+  height: calc(100vh - 120px);
+}
+
+[class*='popoverArrow'] {
+  fill: var(--bg-frame) !important;
+}
+
+[class*='tableColumnEditorPopoverContent'] {
+  border: none;
+  background: var(--bg-frame) !important;
+}
+
+[class*='toolbarButton'],
+[class*='toolbarToggleItem'] {
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+[class*='toolbarToggleItem'][data-state='on'] {
+  background: var(--bg-editor-active);
+}
+
+[class*='toggleGroupRoot'] button[data-state='on'] {
+    background: var(--bg-hover);
+}
+
+[class*='toolbarButton']:hover,
+[class*='toolbarToggleItem']:hover {
+  background: var(--bg-hover);
+}
+
+[class*='listItemUnchecked']::before {
+  margin-top: 2px;
+  border: var(--border-size) solid var(--color-grey-dark);
+}
+
+[class*='listItemChecked']:focus,
+[class*='listItemUnchecked']:focus {
+  outline: none;
+}
+
+[class*='listItemChecked']::before,
+[class*='listItemChecked']::after {
+  margin-top: 2px;
+}
+
+[class*='listItemChecked']::before {
+  background-color: var(--color-link);
+}
+
+[class*='cm-selectionMatch'],
+[class*='cm-matchingBracket'] {
+  background: var(--color-text-code-selected-grey) !important;
+}
+
+.cm-selectionBackground {
+  background-color: var(--color-text-code-selected) !important;
+}
+
+[class*='linkDialogPopoverContent'],
+[class*='tableColumnEditorPopoverContent'] {
+  box-shadow: none !important;
+  border: none !important;
+  background: var(--bg-editor-modal) !important;
+  border-radius: var(--border-radius-large);
+  width: fit-content;
+  margin: 0 var(--padding-medium);
+  padding: var(--padding-medium) var(--padding-large);
+}
+
+[class*='tableColumnEditorToolbar'] button,
+[class*='linkDialogPopoverContent'] button {
+  transition: var(--transition-fast);
+  cursor: pointer;
+  border-radius: var(--border-radius-medium);
+}
+
+[class*='tableColumnEditorToolbar'] button:hover,
+[class*='linkDialogPopoverContent'] button:hover {
+  background-color: var(--bg-hover);
+}
+
+[class*='linkDialogPopoverContent'] a {
+  color: var(--color-link-modal);
+}
+
+[class*='linkDialogPreviewAnchor'] svg {
+  margin-left: var(--padding-small);
+  width: 16px;
+}
+
+[class*='tableEditor'] {
+  border-color: var(--color-white) !important;
+}

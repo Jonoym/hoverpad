@@ -1,0 +1,99 @@
+.control-panel {
+  display: flex;
+  gap: var(--gapsize);
+  padding: var(--padding-large);
+  width: 100%;
+  height: 100%;
+}
+
+.key {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-heavy);
+  width: 38px;
+  height: 34px;
+  background-color: var(--bg-frame-active);
+  border: var(--border-size) solid var(--color-border);
+  box-shadow: var(--shadow-default);
+  border-radius: var(--border-radius-large);
+}
+
+.control-panel-container {
+  height: 100%;
+  gap: var(--gapsize);
+}
+
+.control-panel-option {
+  height: 44px;
+  color: var(--color-text);
+  font-size: var(--font-size-normal);
+  gap: var(--gapsize);
+  border-radius: var(--border-radius-large);
+  padding: var(--padding-medium) var(--padding-large);
+  border: none;
+  background: transparent;
+}
+
+.control-panel-icon {
+  font-size: var(--icon-large);
+  color: var(--color-text);
+}
+
+.control-panel-option:hover {
+  color: var(--color-text-bright);
+  background: var(--bg-hover);
+}
+
+.control-panel-option:hover .control-panel-icon {
+  color: var(--color-text-bright);
+}
+
+.control-panel-option-active {
+  background: var(--color-green);
+}
+
+.control-panel-option-inactive {
+  background: var(--color-red);
+}
+
+.control-panel-option-active:hover {
+  background: var(--color-green-active);
+}
+
+.control-panel-option-inactive:hover {
+  background: var(--color-red-active);
+}
+
+.control-panel-option .key {
+  background: var(--color-key);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.slider-container {
+  width: 80px;
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  border-radius: var(--border-radius-small);
+  outline: none;
+  background: var(--color-grey-dark);
+  accent-color: var(--color-grey);
+}
+
+.slider:focus {
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}

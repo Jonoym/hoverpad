@@ -45,4 +45,4 @@ Adding the option to upload a file
 ## Changes in file name
 - Need to update metadata and configuration
 
-What if there are duplicates?
+What if there are duplicates - prevent them?

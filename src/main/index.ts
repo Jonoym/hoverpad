@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, globalShortcut, shell } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { WindowType } from '@shared/constants'
 
 interface WindowRegistry {
   main: BrowserWindow | null
@@ -102,7 +103,7 @@ const createNotepad = (data: { name: string }): NotepadWindow => {
   })
 
   const windowParams = new URLSearchParams({
-    windowType: 'NOTE',
+    windowType: WindowType.Note,
     windowId: windowId.toString(),
     ...{ editable: appInfo.editable.toString(), ...data }
   }).toString()

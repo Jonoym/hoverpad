@@ -1,5 +1,5 @@
 import Frame from './Frame'
-import ControlPanel from './ControlPanel'
-import Note from './Note'
+import Divider from './Divider'
+import Editor from './Editor'
 
-export { Frame, ControlPanel, Note }
+export { Divider, Editor, Frame }

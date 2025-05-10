@@ -1,7 +1,6 @@
-import React from 'react'
 import './Divider.css'
 
-const Divider = (): React.ReactElement => {
+function Divider() {
   return <div className="vertical-divider" />
 }
 

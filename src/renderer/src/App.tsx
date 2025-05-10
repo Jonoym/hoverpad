@@ -1,31 +1,32 @@
-import React, { useEffect, useState } from 'react'
-import { ControlPanel, Frame, Note } from './components'
+import { useEffect, useState } from 'react'
+import { ControlPanel, Note } from './windows'
+import { Frame } from './components'
+import { WindowType } from '@shared/constants' // Import the WindowType type
 import './index.css'
 
-const App = (): React.ReactElement => {
-  const [windowInfo, setWindowInfo] = useState<{
-    windowType: string
-    windowId: number | null
-    data: Record<string, string>
-  } | null>(null)
+interface WindowInfo {
+  windowType: string
+  windowId: number | null
+  data: Record<string, string>
+}
+
+function App() {
+  const [windowInfo, setWindowInfo] = useState<WindowInfo | null>(null)
 
   useEffect(() => {
-    // Get window information from the electron API
-    const info = window.api.getWindowInfo()
-    setWindowInfo(info)
+    setWindowInfo(window.api.getWindowInfo())
   }, [])
 
   if (!windowInfo) {
     return (
       <Frame>
-        <div style={{ width: '100vw', height: '100vh' }}></div>
+        <div className="default-window"></div>
       </Frame>
     )
   }
 
-  // Render different components based on window type
   switch (windowInfo.windowType) {
-    case 'NOTE':
+    case WindowType.Note:
       return <Note editable={windowInfo.data.editable == 'true'} />
     default:
       return <ControlPanel />

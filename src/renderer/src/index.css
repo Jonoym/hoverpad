@@ -16,53 +16,98 @@ html body {
   --font-size-normal: 14px;
   --font-size-small: 12px;
   --font-size-code: 13px;
-  
+  --font-weight-heavy: 500;
+
+  --color-white: rgba(255, 255, 255, 1);
   --color-text: rgba(200, 200, 200, 0.9);
   --color-text-bright: rgb(230, 230, 230);
   --color-text-code: #6596d6;
+  --color-text-code-selected: #3a5f7a95;
+  --color-text-code-selected-grey: rgba(100, 100, 100, 0.606);
   --color-link: #4787d9;
+  --color-link-modal: rgb(236, 236, 236);
   --color-border: rgba(255, 255, 255, 0.05);
-  
+  --color-grey: rgb(150, 150, 150);
+  --color-grey-dark: rgb(100, 100, 100);
+  --color-grey-darker: rgb(75, 75, 75);
+  --color-green: rgba(28, 183, 103, 0.138);
+  --color-green-active: rgba(28, 183, 103, 0.24);
+  --color-red: rgba(122, 41, 41, 0.15);
+  --color-red-active: rgba(163, 32, 32, 0.228);
+  --color-key: rgba(40, 44, 52, 0.7);
+
   --bg-titlebar: rgba(112, 159, 252, 0.324);
   --bg-titlebar-inactive: rgba(83, 93, 113, 0.324);
   --bg-titlebar-hover: rgba(109, 137, 193, 0.5);
   --bg-editor: rgb(63, 63, 63, 0.5);
-  --bg-editor-modal: rgba(51, 59, 73, 0.942);
+  --bg-editor-modal: rgb(73, 96, 143);
   --bg-editor-active: rgba(109, 137, 193, 0.4);
   --bg-hover: rgba(255, 255, 255, 0.1);
-  
+  --bg-frame-solid: rgba(40, 44, 52, 1); 
+  --bg-frame: rgba(40, 44, 52, 0.9); 
+  --bg-frame-active: rgba(40, 44, 52, 0.2);
+
   --shadow-default: 0 2px 5px rgba(0, 0, 0, 0.2);
-  --border-radius-lg: 6px;
-  --border-radius-sm: 3px;
   --transition-default: all 0.3s ease;
+  --transition-fast: all 0.2s ease;
+
+  --padding-small: 3px;
+  --padding-medium: 5px;
+  --padding-large: 10px;
+
+  --border-size: 1px;
+
+  --scrollbar-radius: 4px;
+  --scrollbar-size: 8px;
+
+  --key-radius: 10px;
+  --border-radius-large: 8px;
+  --border-radius-medium: 6px;
+  --border-radius-small: 3px;
+
+  --gapsize: 10px;
+  --gapsize-small: 5px;
+
+  --icon-large: 24px;
+  --icon-small: 20px;
+
+  --list-padding: 20px;
 }
 
 *:focus {
-  outline: 1px solid var(--color-text);
+  outline: var(--border-size) solid var(--color-text);
 }
 
-
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: #888; /* COLOUR */
+  border-radius: var(--scrollbar-radius);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #555; /* COLOUR */
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 4px;
+  border-radius: var(--scrollbar-radius);
 }
 
 text {
   font-family: 'Open Sans', sans-serif;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.default-window {
+  width: 100vw;
+  height: 100vh;
 }
 
 .centre {
@@ -77,16 +122,10 @@ text {
   justify-content: space-between;
 }
 
-.key {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 500;
-  width: 38px;
-  height: 34px;
-  background-color: rgba(40, 44, 52, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.transition {
+  transition: var(--transition-default);
 }
 
-.transition {
-  transition: all 0.3s ease;
+.transition-fast {
+  transition: var(--transition-fast);
 }
