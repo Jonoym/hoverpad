@@ -8,9 +8,10 @@ interface Position {
 
 interface FrameProps {
   children?: ReactNode
+  className?: string
 }
 
-function Frame({ children }: FrameProps) {
+function Frame({ children, className }: FrameProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [startPos, setStartPos] = useState<Position>({ x: 0, y: 0 })
 
@@ -43,7 +44,7 @@ function Frame({ children }: FrameProps) {
 
   return (
     <div
-      className="frame-container"
+      className={`frame-container ${className}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

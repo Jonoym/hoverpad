@@ -14,9 +14,9 @@ function Note({ editable }: NoteProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [isEditable, setIsEditable] = useState<boolean>(editable)
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
-  // const [content, setContent] = useState<string>('## Hello MDX')
 
   const titleRef = useRef<string>(null)
+  const contentRef = useRef<string>('')
 
   useEffect(() => {
     window.api.onToggleEdit((editable): void => {
@@ -38,6 +38,22 @@ function Note({ editable }: NoteProps) {
     }
   }
 
+  const saveTitle = () => {
+    if (!titleRef.current || titleRef.current === '') {
+      console.error('Unable to save empty Title')
+      return
+    }
+    console.log(`Attempting to save Title: ${titleRef.current}`)
+
+    window.api.saveTitle(titleRef.current!)
+  }
+
+  const saveContent = () => {
+    console.log(`Attempting to save content for Title: ${titleRef.current}`)
+
+    window.api.saveContent(contentRef.current)
+  }
+
   return (
     <Frame>
       <div className="note-container no-drag">
@@ -48,14 +64,13 @@ function Note({ editable }: NoteProps) {
             <input
               ref={titleInputRef}
               type="text"
-              // value="New nOte"
               readOnly={!isTitleEditable}
               className={`transition ${isTitleEditable ? '' : 'input-inactive'}`}
-              // onChange={(e) => (titleRef.current = e.target.value)}
               onKeyDown={handleTitleKeyDown}
               onBlur={(e) => {
                 titleRef.current = e.target.value
                 setTitleEditable(false)
+                saveTitle()
               }}
             />
           </div>
@@ -70,7 +85,10 @@ function Note({ editable }: NoteProps) {
               <LuPenLine className="note-titlebar-icon transition" />
             </button>
             <Divider />
-            <button className="centre note-titlebar-option transition pointer">
+            <button
+              className="centre note-titlebar-option transition pointer"
+              onClick={saveContent}
+            >
               <LuSave className="note-titlebar-icon transition" />
             </button>
             <Divider />
@@ -83,7 +101,7 @@ function Note({ editable }: NoteProps) {
           </div>
         </div>
         <div className="note-content">
-          <Editor />
+          <Editor setContent={(content) => (contentRef.current = content)} />
         </div>
         <div className="note-footer" />
       </div>

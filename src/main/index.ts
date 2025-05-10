@@ -1,67 +1,32 @@
 import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { createControlPanel, createNotepad, windows, appInfo } from './windows'
-
-interface Response {
-  success: boolean
-  error?: string
-}
-
-const updateOpacity = (value: number): Response => {
-  const mainWindow = windows.main
-  if (!mainWindow) return { success: false, error: 'Main window not found' }
-  if (value < 0 || value > 1) return { success: false, error: 'Invalid opacity value' }
-  mainWindow.setOpacity(value)
-
-  for (const win of windows.notes.values()) {
-    if (!win.isDestroyed()) {
-      win.setOpacity(value)
-    }
-  }
-
-  if (value !== 0) appInfo.opacity = value
-
-  return { success: true }
-}
-
-const toggleHide = (): void => {
-  if (appInfo.hidden) {
-    appInfo.hidden = false
-    updateOpacity(appInfo.opacity)
-    updateEdit(appInfo.editable)
-  } else {
-    appInfo.hidden = true
-    updateOpacity(0)
-    updateEdit(false)
-  }
-}
-
-const updateEdit = (state: boolean): Response => {
-  const mainWindow = windows.main
-  if (!mainWindow) return { success: false, error: 'Main window not found' }
-
-  for (const win of windows.notes.values()) {
-    if (!win.isDestroyed()) {
-      win.setIgnoreMouseEvents(!state)
-    }
-  }
-
-  return { success: true }
-}
-
-const toggleEdit = (): Response => {
-  if (appInfo.hidden) return { success: false, error: 'Main window is hidden' }
-  appInfo.editable = !appInfo.editable
-
-  windows.main?.webContents.send('shortcut-toggle-edit', appInfo.editable)
-  for (const win of windows.notes.values())
-    win?.webContents.send('shortcut-toggle-edit', appInfo.editable)
-
-  return updateEdit(appInfo.editable)
-}
+import { createControlPanel, createNotepad } from './windows'
+import { loadConfiguration, loadMetadata, saveContent, updateTitle } from './files'
+import { appState } from './state'
+import {
+  CHANGE_OPACITY,
+  CLOSE_WINDOW,
+  CREATE_NOTE,
+  OPEN_NOTE,
+  SAVE_CONTENT,
+  SAVE_TITLE,
+  TOGGLE_EDIT,
+  TOGGLE_EXPAND,
+  TOGGLE_HIDE
+} from '@shared/constants'
+import { toggleEdit, toggleExpand, toggleHide, updateOpacity } from './controlPanel'
 
 const createWindow = (): void => {
-  windows.main = createControlPanel()
+  appState.windows.main = createControlPanel()
+}
+
+const setupApplication = async () => {
+  const [config, metadata] = await Promise.all([loadConfiguration(), loadMetadata()])
+
+  if (config != null) appState.config = config
+  if (metadata != null) appState.metadata = metadata
+
+  createWindow()
 }
 
 // This method will be called when Electron has finished
@@ -78,13 +43,11 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  createWindow()
+  setupApplication()
 
   globalShortcut.register('CommandOrControl+H', toggleHide)
+  globalShortcut.register('CommandOrControl+E', toggleEdit)
   globalShortcut.register('CommandOrControl+N', () => createNotepad({ name: 'New Note' }))
-  globalShortcut.register('CommandOrControl+E', () => {
-    toggleEdit()
-  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -102,19 +65,19 @@ app.on('window-all-closed', () => {
   }
 })
 
-ipcMain.handle('change-opacity', (event, value) => {
+ipcMain.handle(CHANGE_OPACITY, (event, value) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
   return updateOpacity(value)
 })
 
-ipcMain.handle('create-note', (event, data) => {
+ipcMain.handle(CREATE_NOTE, (event, data) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
   try {
-    const { windowId } = createNotepad(data)
+    const windowId = createNotepad(data)
     return { success: true, windowId: windowId }
   } catch (error) {
     console.error('Failed to open secondary window:', error)
@@ -122,9 +85,7 @@ ipcMain.handle('create-note', (event, data) => {
   }
 })
 
-ipcMain.handle('button-toggle-hide', (event) => {
-  console.log(globalShortcut.isRegistered('CommandOrControl+H'))
-
+ipcMain.handle(TOGGLE_HIDE, (event) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
@@ -137,7 +98,7 @@ ipcMain.handle('button-toggle-hide', (event) => {
   }
 })
 
-ipcMain.handle('button-toggle-edit', (event) => {
+ipcMain.handle(TOGGLE_EDIT, (event) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
@@ -150,12 +111,25 @@ ipcMain.handle('button-toggle-edit', (event) => {
   }
 })
 
-ipcMain.handle('open-note', (event, data) => {
+ipcMain.handle(TOGGLE_EXPAND, (event) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
   try {
-    const { windowId } = createNotepad(data)
+    toggleExpand()
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to Toggle Expand:', error)
+    return { success: false, error: String(error) }
+  }
+})
+
+ipcMain.handle(OPEN_NOTE, (event, data) => {
+  const sourceWindow = BrowserWindow.fromWebContents(event.sender)
+  if (!sourceWindow) return { success: false, error: 'Source window not found' }
+
+  try {
+    const windowId = createNotepad(data)
     return { success: true, windowId: windowId }
   } catch (error) {
     console.error('Failed to open secondary window:', error)
@@ -163,7 +137,7 @@ ipcMain.handle('open-note', (event, data) => {
   }
 })
 
-ipcMain.handle('close-window', (event) => {
+ipcMain.handle(CLOSE_WINDOW, (event) => {
   const window = BrowserWindow.fromWebContents(event.sender)
   if (window && !window.isDestroyed()) {
     window.close()
@@ -171,4 +145,26 @@ ipcMain.handle('close-window', (event) => {
   }
 
   return { success: false, error: 'Window not found or already destroyed' }
+})
+
+ipcMain.handle(SAVE_TITLE, (event, title: string) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+
+  if (!window) return { success: false, error: 'Window not found' }
+
+  return updateTitle(window, title)
+    ? { success: true }
+    : { success: false, error: 'Failed to Update Title' }
+})
+
+ipcMain.handle(SAVE_CONTENT, (event, content: string) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) return { success: false, error: 'Window not found' }
+
+  const title = appState.files.browserToTitle.get(window)
+  if (!title) return { success: false, error: 'Failed to resolve Title' }
+
+  return saveContent(title, content)
+    ? { success: true }
+    : { success: false, error: 'Failed to Save Content' }
 })

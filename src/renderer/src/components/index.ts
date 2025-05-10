@@ -1,5 +1,6 @@
-import Frame from './Frame'
+import Catalogue from './Catalogue'
 import Divider from './Divider'
 import Editor from './Editor'
+import Frame from './Frame'
 
-export { Divider, Editor, Frame }
+export { Catalogue, Divider, Editor, Frame }

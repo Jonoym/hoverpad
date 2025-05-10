@@ -1,13 +1,14 @@
 .frame-container {
-  background-color: var(--bg-frame); /* COLOUR */
+  background-color: var(--bg-frame);
   border-radius: var(--border-radius-large);
   height: calc(100vh - 1px);
   width: calc(100vw - 1px);
   display: flex;
   flex-direction: column;
   position: relative;
-  border: 1px solid var(--color-border); /* COLOUR */
+  border: 1px solid var(--color-border);
   overflow: hidden;
+  transition: var(--transition-default);
 }
 
 .title-bar {

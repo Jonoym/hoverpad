@@ -10,6 +10,7 @@
 - Saving files                                  2
 - Text Search                                   4
 - Saving Loader                                 2
+- Zod
 
 ## Low Priority
 - Continued hover after click

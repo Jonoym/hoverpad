@@ -1,0 +1,35 @@
+.note-catalogue {
+  position: fixed;
+  top: 60px;
+  left: 0px;
+  /* height: 440px; */
+  width: calc(100% - 2 * var(--padding-medium));
+  background: blue;
+  margin: var(--padding-medium);
+  padding: var(--padding-medium);
+  -webkit-user-drag: none;
+  overflow: hidden;
+}
+
+.note-catalogue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.note-catalogue-tags {
+  position: relative;
+  background: green;
+  width: 100%;
+  gap: var(--gapsize);
+  display: flex;
+  align-items: center;
+}
+
+.note-catalogue-tag {
+  position: relative;
+  width: 80px;
+  height: 24px;
+  border-radius: var(--border-radius-medium);
+  background: red;
+}
