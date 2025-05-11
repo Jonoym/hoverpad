@@ -7,9 +7,10 @@ import {
   configFileName,
   configurationsDirectoryName,
   metadataFileName,
-  notesDirectoryName
+  notesDirectoryName,
+  SEND_NOTES_LIST
 } from '@shared/constants'
-import { ApplicationConfiguration, WindowMetadata } from '@shared/types'
+import { ApplicationConfiguration, NoteInfo, WindowMetadata } from '@shared/types'
 import { appState } from './state'
 import { BrowserWindow } from 'electron'
 
@@ -24,22 +25,25 @@ export const getConfigurationDirectory = () =>
 
 const convertTitleToFile = (title: string) => `${title.toLowerCase().replaceAll(' ', '-')}`
 
-const convertFileToTitle = (title: string) => title.replaceAll('-', ' ').replaceAll(/\.md$/, '')
+const convertFileToTitle = (title: string) => title.replaceAll('-', ' ').replace(/\.md$/, '')
 
-export const getNotes = async () => {
+export const getNotes = async (): Promise<NoteInfo[]> => {
   const notesDir = getNotesDirectory()
 
   ensureDir(notesDir)
 
   const notes = (await readdir(notesDir)).filter((filename) => filename.endsWith('.md'))
 
-  return Promise.all(notes.map((filename) => getNoteInfo(filename, notesDir)))
+  return await Promise.all(notes.map((filename) => getNoteInfo(filename, notesDir)))
+  // return notes.map((filename): NoteInfo => {
+  //   return { name: filename, lastModifiedTime: 0 }
+  // })
 }
 
-export const getNoteInfo = async (filename: string, notesDir: string) => {
+export const getNoteInfo = async (filename: string, notesDir: string): Promise<NoteInfo> => {
   const stats = await stat(`${notesDir}/${filename}`)
 
-  return { title: convertFileToTitle(filename), lastEditTime: stats.mtimeMs }
+  return { name: convertFileToTitle(filename), lastModifiedTime: stats.mtimeMs }
 }
 
 export const getNoteContent = async (title: string) => {
@@ -70,6 +74,8 @@ export const renameNote = async (previousTitle: string, newTitle: string) => {
   const notesDir = getNotesDirectory()
 
   ensureDir(notesDir)
+
+  console.log(`Renaming Note from ${previousTitle} to ${newTitle}`)
 
   await rename(
     `${notesDir}/${convertTitleToFile(previousTitle)}.md`,
@@ -140,7 +146,12 @@ export const saveMetadata = async (metadata: Record<string, WindowMetadata>) => 
 
 // Higher Order Functions
 
-export const updateTitle = (window: BrowserWindow, title: string): boolean => {
+export const getNotesList = async () => {
+  const notes = await getNotes()
+  appState.windows.main?.webContents.send(SEND_NOTES_LIST, notes)
+}
+
+export const updateTitle = async (window: BrowserWindow, title: string): Promise<boolean> => {
   console.log(`Attempting to update Title: ${title}`)
   const files = appState.files
   const previousTitle = appState.files.browserToTitle.get(window)
@@ -149,21 +160,19 @@ export const updateTitle = (window: BrowserWindow, title: string): boolean => {
     console.log(` Previous Title: ${previousTitle}`)
     files.titleToBrowser.delete(previousTitle)
     files.titles.delete(previousTitle)
-    renameNote(previousTitle, title)
-  } else {
-    console.log(`Creating New Note with Title: ${title}`)
-    createNote(title)
+    await renameNote(previousTitle, title)
   }
   appState.files.browserToTitle.set(window, title)
+  getNotesList()
 
   return true
 }
 
-export const saveContent = (title: string, content: string): boolean => {
+export const saveContent = async (title: string, content: string): Promise<boolean> => {
   console.log(`Attempting to save Title: ${title}`)
 
   if (title) {
-    writeNoteContent(title, content)
+    await writeNoteContent(title, content)
     return true
   }
   return false

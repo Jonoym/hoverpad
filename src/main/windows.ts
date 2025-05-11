@@ -3,6 +3,7 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { WindowType } from '@shared/constants'
 import { appState } from './state'
+import { getNoteContent } from './files'
 
 let nextWindowId = 1
 
@@ -72,7 +73,7 @@ export const createControlPanel = (): BrowserWindow => {
   return controlPanelWindow
 }
 
-export const createNotepad = (data?: { name: string }): number => {
+export const createNotepad = async (filename?: string): Promise<number> => {
   const windowId = nextWindowId++
 
   const noteWindow = new BrowserWindow({
@@ -91,10 +92,18 @@ export const createNotepad = (data?: { name: string }): number => {
     }
   })
 
+  const content = filename ? await getNoteContent(filename) : ''
+
+  filename = filename ? filename : 'Untitled'
+
   const windowParams = new URLSearchParams({
     windowType: WindowType.Note,
     windowId: windowId.toString(),
-    ...{ editable: appState.config.editable.toString(), ...data }
+    ...{
+      editable: appState.config.editable.toString(),
+      filename: filename,
+      content: content
+    }
   }).toString()
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -104,6 +113,8 @@ export const createNotepad = (data?: { name: string }): number => {
   }
 
   appState.windows.idToNoteBrowser.set(windowId, noteWindow)
+  appState.files.titleToBrowser.set(filename, noteWindow)
+  appState.files.browserToTitle.set(noteWindow, filename)
 
   noteWindow.on('closed', () => {
     appState.windows.idToNoteBrowser.delete(windowId)

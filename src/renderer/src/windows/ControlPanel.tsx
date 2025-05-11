@@ -16,15 +16,21 @@ import { useState } from 'react'
 import Divider from '../components/Divider'
 import { handleClose } from '@renderer/functions'
 import { Catalogue } from '@renderer/components'
+import { NoteInfo } from '@shared/types'
 
 function ControlPanel() {
   const [opacity, setOpacity] = useState(100)
   const [isEditable, setIsEditable] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [notes, setNotes] = useState<Array<NoteInfo>>([])
 
   useEffect(() => {
     window.api.onToggleEdit((editable: boolean): void => {
       setIsEditable(editable)
+    })
+
+    window.api.onNotesList((notes: Array<NoteInfo>) => {
+      setNotes(notes)
     })
 
     return () => {
@@ -80,7 +86,7 @@ function ControlPanel() {
               <span>+</span>
               <span className="centre container key transition">E</span>
             </button>
-            <Divider />
+            <Divider vertical />
             <button
               className="centre control-panel-option no-drag transition pointer"
               onClick={toggleHide}
@@ -93,7 +99,7 @@ function ControlPanel() {
               <span>+</span>
               <span className="centre container key transition">H</span>
             </button>
-            <Divider />
+            <Divider vertical />
             <div className="centre control-panel-option no-drag transition">
               <LuSunMoon className="control-panel-icon transition" />
               <div className="slider-container centre">
@@ -108,7 +114,7 @@ function ControlPanel() {
                 />
               </div>
             </div>
-            <Divider />
+            <Divider vertical />
             <button
               className="centre control-panel-option no-drag transition pointer"
               onClick={createNote}
@@ -121,18 +127,18 @@ function ControlPanel() {
               <span>+</span>
               <span className="centre container key transition">N</span>
             </button>
-            <Divider />
+            <Divider vertical />
             <button
               className="centre control-panel-option no-drag transition pointer"
               onClick={toggleExpand}
             >
               <LuFileStack className="control-panel-icon transition" />
             </button>
-            <Divider />
+            <Divider vertical />
             <button className="centre control-panel-option no-drag transition pointer">
               <LuSettings className="control-panel-icon transition" />
             </button>
-            <Divider />
+            <Divider vertical />
             <button
               className="centre control-panel-option no-drag transition pointer"
               onClick={handleClose}
@@ -141,7 +147,7 @@ function ControlPanel() {
             </button>
           </div>
         </div>
-        <Catalogue />
+        {isExpanded ? <Catalogue notes={notes} /> : <></>}
       </div>
     </Frame>
   )

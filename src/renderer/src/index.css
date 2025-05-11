@@ -34,7 +34,7 @@ html body {
   --color-green-active: rgba(28, 183, 103, 0.24);
   --color-red: rgba(122, 41, 41, 0.15);
   --color-red-active: rgba(163, 32, 32, 0.228);
-  --color-key: rgba(40, 44, 52, 0.7);
+  --color-button: rgba(50, 54, 62, 0.7);
 
   --bg-titlebar: rgba(112, 159, 252, 0.324);
   --bg-titlebar-inactive: rgba(83, 93, 113, 0.324);
@@ -43,8 +43,8 @@ html body {
   --bg-editor-modal: rgb(73, 96, 143);
   --bg-editor-active: rgba(109, 137, 193, 0.4);
   --bg-hover: rgba(255, 255, 255, 0.1);
-  --bg-frame-solid: rgba(40, 44, 52, 1); 
-  --bg-frame: rgba(40, 44, 52, 0.9); 
+  --bg-frame-solid: rgba(40, 44, 52, 1);
+  --bg-frame: rgba(40, 44, 52, 0.95);
   --bg-frame-active: rgba(40, 44, 52, 0.2);
 
   --shadow-default: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -99,6 +99,26 @@ html body {
 
 text {
   font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+  color: var(--color-text-bright);
+  font-weight: var(--font-weight-heavy);
+}
+
+h2 {
+  color: var(--color-text-bright);
+  font-weight: var(--font-weight-heavy);
+}
+
+h3 {
+  color: var(--color-text-bright);
+  font-weight: var(--font-weight-heavy);
+}
+
+h4 {
+  color: var(--color-text-bright);
+  font-weight: var(--font-weight-heavy);
 }
 
 .no-drag {

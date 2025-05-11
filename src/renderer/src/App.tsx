@@ -3,18 +3,14 @@ import { ControlPanel, Note } from './windows'
 import { Frame } from './components'
 import { WindowType } from '@shared/constants' // Import the WindowType type
 import './index.css'
-
-interface WindowInfo {
-  windowType: string
-  windowId: number | null
-  data: Record<string, string>
-}
+import { WindowInfo } from './windows/Note'
 
 function App() {
   const [windowInfo, setWindowInfo] = useState<WindowInfo | null>(null)
 
   useEffect(() => {
-    setWindowInfo(window.api.getWindowInfo())
+    const windowInfo = window.api.getWindowInfo()
+    setWindowInfo(windowInfo)
   }, [])
 
   if (!windowInfo) {
@@ -27,7 +23,7 @@ function App() {
 
   switch (windowInfo.windowType) {
     case WindowType.Note:
-      return <Note editable={windowInfo.data.editable == 'true'} />
+      return <Note windowInfo={windowInfo} />
     default:
       return <ControlPanel />
   }

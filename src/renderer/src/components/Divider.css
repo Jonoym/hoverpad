@@ -4,3 +4,11 @@
   background-color: var(--color-grey);
   opacity: 0.5;
 }
+
+.horizontal-divider {
+  height: 0.5px;
+  width: 100%;
+  background-color: var(--color-grey);
+  opacity: 0.5;
+  margin-bottom: var(--padding-large)
+}

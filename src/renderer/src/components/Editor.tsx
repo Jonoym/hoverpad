@@ -20,10 +20,11 @@ import './editor.css'
 import { debounce } from 'lodash'
 
 interface EditorProps {
+  content: string
   setContent: (value: string) => void
 }
 
-function Editor({ setContent }: EditorProps) {
+function Editor({ content, setContent }: EditorProps) {
   const handleContentChange = debounce((content) => {
     setContent(content)
   }, 1000)
@@ -32,7 +33,7 @@ function Editor({ setContent }: EditorProps) {
     <MDXEditor
       className="dark-theme"
       contentEditableClassName="prose"
-      markdown="> This is a quote"
+      markdown={content}
       onChange={(e) => handleContentChange(e)}
       plugins={[
         headingsPlugin(),

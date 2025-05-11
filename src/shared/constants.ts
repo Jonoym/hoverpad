@@ -11,12 +11,13 @@ export const TOGGLE_EDIT = 'toggle-edit'
 export const TOGGLE_EXPAND = 'toggle-expand'
 export const CLOSE_WINDOW = 'close-window'
 
-export const SAVE_TITLE = 'save-title'
 export const SAVE_CONTENT = 'save-content'
 export const OPEN_NOTE = 'open-note'
+export const REQUEST_NOTES_LIST = 'request-notes-list'
 
 // Listeners
 export const SEND_TOGGLE_EDIT = 'send-toggle-edit'
+export const SEND_NOTES_LIST = 'send-notes-list'
 
 export const appDirectoryName = '.hoverpad'
 export const configurationsDirectoryName = 'config'

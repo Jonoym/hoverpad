@@ -1,15 +1,15 @@
 import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createControlPanel, createNotepad } from './windows'
-import { loadConfiguration, loadMetadata, saveContent, updateTitle } from './files'
+import { getNotesList, loadConfiguration, loadMetadata, saveContent, updateTitle } from './files'
 import { appState } from './state'
 import {
   CHANGE_OPACITY,
   CLOSE_WINDOW,
   CREATE_NOTE,
   OPEN_NOTE,
+  REQUEST_NOTES_LIST,
   SAVE_CONTENT,
-  SAVE_TITLE,
   TOGGLE_EDIT,
   TOGGLE_EXPAND,
   TOGGLE_HIDE
@@ -47,7 +47,7 @@ app.whenReady().then(() => {
 
   globalShortcut.register('CommandOrControl+H', toggleHide)
   globalShortcut.register('CommandOrControl+E', toggleEdit)
-  globalShortcut.register('CommandOrControl+N', () => createNotepad({ name: 'New Note' }))
+  globalShortcut.register('CommandOrControl+N', () => createNotepad('New Note'))
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -72,12 +72,12 @@ ipcMain.handle(CHANGE_OPACITY, (event, value) => {
   return updateOpacity(value)
 })
 
-ipcMain.handle(CREATE_NOTE, (event, data) => {
+ipcMain.handle(CREATE_NOTE, async (event, data) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
   try {
-    const windowId = createNotepad(data)
+    const windowId = await createNotepad(data)
     return { success: true, windowId: windowId }
   } catch (error) {
     console.error('Failed to open secondary window:', error)
@@ -124,12 +124,12 @@ ipcMain.handle(TOGGLE_EXPAND, (event) => {
   }
 })
 
-ipcMain.handle(OPEN_NOTE, (event, data) => {
+ipcMain.handle(OPEN_NOTE, async (event, filename) => {
   const sourceWindow = BrowserWindow.fromWebContents(event.sender)
   if (!sourceWindow) return { success: false, error: 'Source window not found' }
 
   try {
-    const windowId = createNotepad(data)
+    const windowId = await createNotepad(filename)
     return { success: true, windowId: windowId }
   } catch (error) {
     console.error('Failed to open secondary window:', error)
@@ -147,24 +147,26 @@ ipcMain.handle(CLOSE_WINDOW, (event) => {
   return { success: false, error: 'Window not found or already destroyed' }
 })
 
-ipcMain.handle(SAVE_TITLE, (event, title: string) => {
-  const window = BrowserWindow.fromWebContents(event.sender)
-
-  if (!window) return { success: false, error: 'Window not found' }
-
-  return updateTitle(window, title)
-    ? { success: true }
-    : { success: false, error: 'Failed to Update Title' }
-})
-
-ipcMain.handle(SAVE_CONTENT, (event, content: string) => {
+ipcMain.handle(SAVE_CONTENT, async (event, title: string, content: string) => {
   const window = BrowserWindow.fromWebContents(event.sender)
   if (!window) return { success: false, error: 'Window not found' }
 
-  const title = appState.files.browserToTitle.get(window)
-  if (!title) return { success: false, error: 'Failed to resolve Title' }
+  if (!(await updateTitle(window, title))) {
+    return { success: false, error: 'Failed to Update Title' }
+  }
 
-  return saveContent(title, content)
+  console.log('Successfully updated title')
+
+  return (await saveContent(title, content))
     ? { success: true }
     : { success: false, error: 'Failed to Save Content' }
+})
+
+ipcMain.handle(REQUEST_NOTES_LIST, async () => {
+  try {
+    getNotesList()
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: String(error) }
+  }
 })

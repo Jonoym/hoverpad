@@ -6,17 +6,22 @@ import { handleClose } from '@renderer/functions'
 
 import './Note.css'
 
-interface NoteProps {
-  editable: boolean
+export interface WindowInfo {
+  windowType: string
+  data: Record<string, string>
 }
 
-function Note({ editable }: NoteProps) {
+interface NoteProps {
+  windowInfo: WindowInfo
+}
+
+function Note({ windowInfo }: NoteProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
-  const [isEditable, setIsEditable] = useState<boolean>(editable)
+  const [isEditable, setIsEditable] = useState<boolean>(windowInfo.data.editable == 'true')
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
 
-  const titleRef = useRef<string>(null)
-  const contentRef = useRef<string>('')
+  const titleRef = useRef<string>(windowInfo.data.filename)
+  const contentRef = useRef<string>(windowInfo.data.content)
 
   useEffect(() => {
     window.api.onToggleEdit((editable): void => {
@@ -38,20 +43,15 @@ function Note({ editable }: NoteProps) {
     }
   }
 
-  const saveTitle = () => {
+  const saveContent = () => {
+    console.log(`Attempting to save content for Title: ${titleRef.current}`)
+
     if (!titleRef.current || titleRef.current === '') {
       console.error('Unable to save empty Title')
       return
     }
-    console.log(`Attempting to save Title: ${titleRef.current}`)
 
-    window.api.saveTitle(titleRef.current!)
-  }
-
-  const saveContent = () => {
-    console.log(`Attempting to save content for Title: ${titleRef.current}`)
-
-    window.api.saveContent(contentRef.current)
+    window.api.saveContent(titleRef.current, contentRef.current)
   }
 
   return (
@@ -64,13 +64,14 @@ function Note({ editable }: NoteProps) {
             <input
               ref={titleInputRef}
               type="text"
+              defaultValue={titleRef.current}
               readOnly={!isTitleEditable}
               className={`transition ${isTitleEditable ? '' : 'input-inactive'}`}
               onKeyDown={handleTitleKeyDown}
               onBlur={(e) => {
                 titleRef.current = e.target.value
                 setTitleEditable(false)
-                saveTitle()
+                saveContent()
               }}
             />
           </div>
@@ -101,7 +102,10 @@ function Note({ editable }: NoteProps) {
           </div>
         </div>
         <div className="note-content">
-          <Editor setContent={(content) => (contentRef.current = content)} />
+          <Editor
+            content={windowInfo.data.content}
+            setContent={(content) => (contentRef.current = content)}
+          />
         </div>
         <div className="note-footer" />
       </div>
