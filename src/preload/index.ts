@@ -5,22 +5,22 @@ import {
   CLOSE_WINDOW,
   CREATE_NOTE,
   OPEN_NOTE,
-  REQUEST_NOTES_LIST,
-  SAVE_CONTENT,
+  REFRESH_NOTES,
+  SAVE_NOTE,
   SEND_NOTES_LIST,
   SEND_TOGGLE_EDIT,
   TOGGLE_EDIT,
   TOGGLE_EXPAND,
   TOGGLE_HIDE
 } from '@shared/constants'
-import { NoteInfo } from '@shared/types'
+import { NoteDetails } from '@shared/types'
 
 const api = {
   // Window management APIs
-  changeOpacity: (value: number) => ipcRenderer.invoke(CHANGE_OPACITY, value),
-  createNote: (data?: { name: string }) => ipcRenderer.invoke(CREATE_NOTE, data),
+  changeOpacity: (opacity: number) => ipcRenderer.invoke(CHANGE_OPACITY, opacity),
+  createNote: () => ipcRenderer.invoke(CREATE_NOTE),
   closeWindow: () => ipcRenderer.invoke(CLOSE_WINDOW),
-  openNote: (filename: string) => ipcRenderer.invoke(OPEN_NOTE, filename),
+  openNote: (title: string) => ipcRenderer.invoke(OPEN_NOTE, title),
 
   // Toggle functionality APIs
   toggleHide: () => ipcRenderer.invoke(TOGGLE_HIDE),
@@ -28,13 +28,14 @@ const api = {
   toggleExpand: () => ipcRenderer.invoke(TOGGLE_EXPAND),
 
   // File APIs
-  saveContent: (title: string, content: string) => ipcRenderer.invoke(SAVE_CONTENT, title, content),
-  requestNotes: () => ipcRenderer.invoke(REQUEST_NOTES_LIST),
+  saveContent: (title: string, previousTitle: string, content: string) =>
+    ipcRenderer.invoke(SAVE_NOTE, title, previousTitle, content),
+  requestNotes: () => ipcRenderer.invoke(REFRESH_NOTES),
 
   // Event listeners
   onToggleEdit: (callback: (editable: boolean) => void) =>
     ipcRenderer.on(SEND_TOGGLE_EDIT, (_event, value) => callback(value)),
-  onNotesList: (callback: (notes: Array<NoteInfo>) => void) =>
+  onNotesList: (callback: (notes: Array<NoteDetails>) => void) =>
     ipcRenderer.on(SEND_NOTES_LIST, (_event, value) => callback(value)),
 
   getWindowInfo: () => {

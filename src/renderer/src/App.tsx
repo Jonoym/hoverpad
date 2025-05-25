@@ -25,7 +25,7 @@ function App() {
     case WindowType.Note:
       return <Note windowInfo={windowInfo} />
     default:
-      return <ControlPanel />
+      return <ControlPanel windowInfo={windowInfo} />
   }
 }
 

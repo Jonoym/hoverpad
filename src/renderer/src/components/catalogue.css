@@ -49,7 +49,7 @@
   margin-bottom: var(--padding-large);
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--gapsize);
 }
 
@@ -63,7 +63,7 @@
   padding: var(--padding-large);
   border-radius: var(--border-radius-large);
   border: var(--border-size) solid var(--color-border);
-  height: 50px;
+  height: 40px;
   font-size: var(--font-size-normal);
   cursor: pointer;
 }

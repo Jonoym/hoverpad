@@ -1,39 +1,21 @@
-import { BrowserWindow } from 'electron'
-import { ApplicationConfiguration, WindowMetadata } from '@shared/types'
+import { ApplicationState } from '@shared/types'
 
-type WindowRegistry = {
-  main: BrowserWindow | null
-  idToNoteBrowser: Map<number, BrowserWindow>
-}
-
-type FileRegistry = {
-  titles: Set<string>
-  browserToTitle: Map<BrowserWindow, string>
-  titleToBrowser: Map<string, BrowserWindow>
-}
-
-type ApplicationState = {
-  windows: WindowRegistry
-  files: FileRegistry
-  config: ApplicationConfiguration
-  metadata: Record<string, WindowMetadata>
+export const DEFAULT_CONFIG = {
+  hidden: false,
+  editable: true,
+  opacity: 1,
+  expanded: false
 }
 
 export const appState: ApplicationState = {
   windows: {
-    main: null,
-    idToNoteBrowser: new Map()
+    controlPanel: null, // Reference to the Control Panel Window
+    titleToNote: new Map(), // Mapping from Title to Note Windows
+    noteToTitle: new Map(), // Mapping from Note Window to Titles
+    windows: [] // Current Window Configurations
   },
   files: {
-    titles: new Set(),
-    browserToTitle: new Map(),
-    titleToBrowser: new Map()
+    titles: new Set() // Set of all Titles
   },
-  config: {
-    hidden: false,
-    editable: true,
-    opacity: 1,
-    expanded: false
-  },
-  metadata: {}
+  config: DEFAULT_CONFIG
 }

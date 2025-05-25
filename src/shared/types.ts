@@ -1,5 +1,8 @@
-export type NoteInfo = {
-  name: string
+import { BrowserWindow } from 'electron'
+
+export type NoteDetails = {
+  title: string
+  active: boolean
   lastModifiedTime: number
 }
 
@@ -10,7 +13,26 @@ export type ApplicationConfiguration = {
   expanded: boolean
 }
 
-export type WindowMetadata = {
-  filename: string
-  tags: Array<string>
+export type WindowRegistry = {
+  controlPanel: BrowserWindow | null
+  titleToNote: Map<string, BrowserWindow>
+  noteToTitle: Map<BrowserWindow, string>
+  windows: WindowBounds[]
+}
+
+export type FileRegistry = {
+  titles: Set<string>
+}
+
+export type ApplicationState = {
+  windows: WindowRegistry
+  files: FileRegistry
+  config: ApplicationConfiguration
+}
+
+export type WindowBounds = {
+  x: number
+  y: number
+  width: number
+  height: number
 }

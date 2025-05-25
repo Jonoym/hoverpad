@@ -20,7 +20,8 @@ function Note({ windowInfo }: NoteProps) {
   const [isEditable, setIsEditable] = useState<boolean>(windowInfo.data.editable == 'true')
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
 
-  const titleRef = useRef<string>(windowInfo.data.filename)
+  const titleRef = useRef<string>(windowInfo.data.title)
+  const previousTitleRef = useRef<string>(windowInfo.data.title)
   const contentRef = useRef<string>(windowInfo.data.content)
 
   useEffect(() => {
@@ -51,7 +52,9 @@ function Note({ windowInfo }: NoteProps) {
       return
     }
 
-    window.api.saveContent(titleRef.current, contentRef.current)
+    window.api.saveContent(titleRef.current, previousTitleRef.current, contentRef.current)
+
+    previousTitleRef.current = titleRef.current
   }
 
   return (

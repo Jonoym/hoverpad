@@ -1,10 +1,12 @@
+// Separate the API into logical groupings for what they do
+// Make use of zod
+
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { NoteInfo } from '@shared/types'
 
 interface API {
-  changeOpacity(value: number): Promise<{ success: boolean; error?: string }>
+  changeOpacity(opacity: number): Promise<{ success: boolean; error?: string }>
   createNote: () => Promise<{ success: boolean; error?: string }>
-  openNote: (filename: string) => Promise<{ success: boolean; windowId?: number; error?: string }>
+  openNote: (title: string) => Promise<{ success: boolean; windowId?: number; error?: string }>
 
   closeWindow: () => Promise<{ success: boolean; error?: string }>
   toggleHide: () => Promise<{ success: boolean; error?: string }>
@@ -14,11 +16,16 @@ interface API {
 
   onToggleEdit: (callback: (editable: boolean) => void) => void
   onNotesList: (callback: (notes: Array<NoteInfo>) => void) => void
-  saveContent: (title: string, content: string) => Promise<{ success: boolean; error?: string }>
+  saveContent: (
+    title: string,
+    previousTitle: string,
+    content: string
+  ) => Promise<{ success: boolean; error?: string }>
 
   getWindowInfo: () => {
     windowType: string
     editable: boolean
+    expnaded: boolean
     data: Record<string, string>
   }
 }

@@ -16,20 +16,30 @@ import { useState } from 'react'
 import Divider from '../components/Divider'
 import { handleClose } from '@renderer/functions'
 import { Catalogue } from '@renderer/components'
-import { NoteInfo } from '@shared/types'
+import { NoteDetails } from '@shared/types'
 
-function ControlPanel() {
-  const [opacity, setOpacity] = useState(100)
-  const [isEditable, setIsEditable] = useState(true)
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [notes, setNotes] = useState<Array<NoteInfo>>([])
+export interface WindowInfo {
+  windowType: string
+  data: Record<string, string>
+}
+
+interface ControlPanelProps {
+  windowInfo: WindowInfo
+}
+
+function ControlPanel({ windowInfo }: ControlPanelProps) {
+  console.log(windowInfo)
+  const [opacity, setOpacity] = useState(Number(windowInfo.data.opacity) * 100)
+  const [isEditable, setIsEditable] = useState(windowInfo.data.editable === 'true')
+  const [isExpanded, setIsExpanded] = useState(windowInfo.data.expanded === 'true')
+  const [notes, setNotes] = useState<Array<NoteDetails>>([])
 
   useEffect(() => {
     window.api.onToggleEdit((editable: boolean): void => {
       setIsEditable(editable)
     })
 
-    window.api.onNotesList((notes: Array<NoteInfo>) => {
+    window.api.onNotesList((notes: Array<NoteDetails>) => {
       setNotes(notes)
     })
 

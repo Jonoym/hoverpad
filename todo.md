@@ -1,16 +1,16 @@
 # Features To Add
 
+- [ ] Returns on APIs 
+- [ ] New line saving issues
+
 ## Overall
 - File preview                                  3
 - Configuration Savings                         3
-- Opening files                                 2
-- Unique IDs                                    2
 
 ## Text Editor
-- Saving files                                  2
 - Text Search                                   4
 - Saving Loader                                 2
-- Zod
+- Debouncing
 
 ## Low Priority
 - Continued hover after click

@@ -46,3 +46,14 @@ Adding the option to upload a file
 - Need to update metadata and configuration
 
 What if there are duplicates - prevent them?
+
+
+# Actions
+
+## Application Start
+
+## Create Note
+
+## Open Note
+
+## Save Note
