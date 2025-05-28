@@ -4,7 +4,31 @@
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "Jonoym",
-  "homepage": "https://electron-vite.org",
+  "homepage": "https://github.com/Jonoym/hoverpad",
+  "build": {
+    "appId": "com.jonoym.hoverpad",
+    "productName": "Hoverpad",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**",
+      "node_modules/**",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "out/main/index.js"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "publish": {
+      "provider": "github"
+    }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
