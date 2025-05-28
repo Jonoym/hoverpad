@@ -4,25 +4,25 @@ on:
   push:
     tags:
       - 'v*'
-
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js 23.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 23
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
 
-      - name: Build Windows & Publish to GitHub Releases
+      - name: Build Windows App
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npm run build:win

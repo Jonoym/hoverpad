@@ -1,4 +1,4 @@
-name: Build and Release macOS DMG
+name: Build & Release macOS App
 
 on:
   push:
@@ -12,31 +12,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js 18.x
-        uses: actions/setup-node@v3
+      - name: Setup Node.js 23.x
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 23
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build macOS DMG
-        run: npm run build:mac
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload DMG to release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/*.dmg
-          asset_name: hoverpad-${{ github.ref_name }}.dmg
-          asset_content_type: application/x-apple-diskimage
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npm run build:mac

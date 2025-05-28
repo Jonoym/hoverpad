@@ -3,9 +3,13 @@ body {
     margin: 0
 }
 
+:root {
+    --size: 1024px;
+}
+
 .logo-container {
-    height: 600px;
-    width: 600px;
+    height: var(--size);
+    width: var(--size);
     background: white;
 }
 
@@ -17,71 +21,71 @@ body {
     height: 100%;
     position: relative;
 
-    transform: scaleX(1.415) scaleY(1.135) translateY(9px);
+    transform: scaleX(1.40) scaleY(1.1) translateY(calc(var(--size) * 0.03));
 }
 
 /* .hologram {
-    transform: rotate(45deg) translate(-50px, -50px);
+    transform: rotate(45deg) translate(-20%, -20%);
     position: absolute;
     width: 50%;
     height: 50%;
     background: linear-gradient(45deg, rgba(10, 10, 10, 0.2), rgba(34, 206, 206, 0.385));
-    border-radius: 30px;
+    border-radius: calc(0.05 * var(--size));
 } */
 
 .hologram1 {
-    transform: rotate(45deg) translate(-146px, -130px);
+    transform: rotate(45deg) translate(calc(-0.26 * var(--size)), calc(-0.23 * var(--size)));
     position: absolute;
     width: 18%;
     height: 24%;
-    background: linear-gradient(46deg, rgba(161, 192, 255, 0.514), rgba(59, 79, 138, 0.886));
-    border-radius: 30px;
-    box-shadow: 4px 4px 0 rgba(59, 79, 138, 0.886);
+    background: linear-gradient(45deg, rgba(161, 192, 255, 0.514), rgba(59, 79, 138, 0.886));
+    border-radius: calc(0.05 * var(--size));
+    /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgba(59, 79, 138, 0.886); */
 }
 
 .hologram1::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    background: url('asfalt-dark.png');
     opacity: 0.1;
     pointer-events: none;
 }
 
 .hologram2 {
-    transform: rotate(45deg) translate(-50px, 30px);
+    transform: rotate(45deg) translate(calc(-0.10 * var(--size)), calc(0.035 * var(--size)));
     position: absolute;
     width: 50%;
     height: 23%;
-    background: linear-gradient(46deg, rgba(195, 215, 255, 0.646), rgba(59, 79, 138, 0.886));
-    border-radius: 30px;
-    box-shadow: 4px 4px 0 rgba(59, 79, 138, 0.886);
+    background: linear-gradient(45deg, rgba(195, 215, 255, 0.646), rgba(59, 79, 138, 0.886));
+    border-radius: calc(0.05 * var(--size));
+    /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgba(59, 79, 138, 0.886); */
 }
 
 .hologram2::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    background: url('asfalt-dark.png');
     opacity: 0.1;
     pointer-events: none;
 }
 
 .hologram3 {
-    transform: rotate(45deg) translate(16px, -130px);
+    transform: rotate(45deg) translate(calc(0.01 * var(--size)), calc(-0.235 * var(--size)));
     position: absolute;
     width: 28%;
     height: 23%;
-    background: linear-gradient(46deg, rgba(119, 136, 187, 0.886), rgba(39, 62, 125, 0.941));
-    border-radius: 30px;
-    box-shadow: 4px 4px 0 rgba(39, 62, 125, 0.941);
+    background: linear-gradient(45deg, rgba(119, 136, 187, 0.886), rgba(39, 62, 125, 0.941));
+    border-radius: calc(0.05 * var(--size));
+    /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgba(39, 62, 125, 0.941); */
 }
 
 .hologram3::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    background: url('asfalt-dark.png');
     opacity: 0.1;
     pointer-events: none;
 }
@@ -91,16 +95,16 @@ body {
     position: absolute;
     width: 50%;
     height: 50%;
-    background: linear-gradient(46deg, rgba(19, 20, 29, 0.847), rgba(118, 118, 118, 0.4));
-    border-radius: 50px;
-    box-shadow: 4px 4px 0 rgb(65, 65, 70);
+    background: linear-gradient(45deg, rgba(19, 20, 29, 0.847), rgba(118, 118, 118, 0.4));
+    border-radius: calc(0.07 * var(--size));
+    /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgb(65, 65, 70); */
 }
 
 .notepad::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('asfalt-dark.png'); /* use a seamless noise texture */
-    opacity: 0.10; /* tweak based on how strong you want the effect */
+    background: url('asfalt-dark.png');
+    opacity: 0.10;
     pointer-events: none;
 }
