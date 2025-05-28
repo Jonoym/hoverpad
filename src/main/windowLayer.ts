@@ -2,21 +2,21 @@
 // Deployment of information functions - abstraction or higher order functions
 
 import { is } from '@electron-toolkit/utils'
-import { SEND_TOGGLE_EDIT, SEND_NOTES_LIST, WindowType } from '@shared/constants'
+import { SEND_TOGGLE_EDIT, SEND_NOTES_LIST, WindowType, CONTROL_PANEL_ID } from '@shared/constants'
 import { NoteDetails, WindowBounds } from '@shared/types'
 import { BrowserWindow, IpcMainInvokeEvent, shell } from 'electron'
 import { join } from 'path'
 import { appState } from './state'
 let nextWindowId = 1
 
-const CONTROL_PANEL_CLOSED: WindowBounds = {
+export const CONTROL_PANEL_CLOSED: WindowBounds = {
   width: 883,
   height: 62,
   x: 0,
   y: 0
 }
 
-const CONTROL_PANEL_OPEN: WindowBounds = {
+export const CONTROL_PANEL_OPEN: WindowBounds = {
   width: 883,
   height: 500,
   x: 0,
@@ -61,14 +61,16 @@ export const WindowLayer = {
     }
   },
 
-  createControlPanel: () => {
+  createControlPanel: (handleWindowUpdate: (title: string, bounds: WindowBounds) => void) => {
     console.log(`[WINDOW_LAYER] createControlPanel()`)
 
-    const windowState = appState.config.expanded ? CONTROL_PANEL_OPEN : CONTROL_PANEL_CLOSED
+    const windowState = appState.windows.windows[CONTROL_PANEL_ID]
+      ? appState.windows.windows[CONTROL_PANEL_ID]
+      : CONTROL_PANEL_CLOSED
 
     const controlPanelWindow = new BrowserWindow({
-      x: 100,
-      y: 100,
+      x: windowState.x,
+      y: windowState.y,
       width: windowState.width,
       height: windowState.height,
       resizable: false,
@@ -94,17 +96,21 @@ export const WindowLayer = {
       expanded: appState.config.expanded.toString()
     }).toString()
 
-    controlPanelWindow.on('move', () => {
-      const bounds = controlPanelWindow.getBounds()
-      console.log(`Window moved to: x=${bounds.x}, y=${bounds.y}`)
-    })
-
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       controlPanelWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?${windowParams}`)
     } else {
       controlPanelWindow.loadFile(join(__dirname, '../renderer/index.html'), {
         search: windowParams
       })
+    }
+
+    const windowBounds = controlPanelWindow.getBounds()
+
+    appState.windows.windows[CONTROL_PANEL_ID] = {
+      x: windowBounds.x,
+      y: windowBounds.y,
+      width: windowBounds.x,
+      height: windowBounds.y
     }
 
     appState.windows.controlPanel = controlPanelWindow
@@ -116,6 +122,27 @@ export const WindowLayer = {
         if (!win.isDestroyed()) win.close()
       })
     })
+
+    controlPanelWindow.on('resize', () => {
+      const bounds = controlPanelWindow.getBounds()
+      handleWindowUpdate(CONTROL_PANEL_ID, bounds)
+    })
+
+    controlPanelWindow.on('move', () => {
+      const bounds = controlPanelWindow.getBounds()
+      handleWindowUpdate(CONTROL_PANEL_ID, bounds)
+    })
+  },
+
+  openWindowArrangement: (
+    noteContent: Array<[string, string]>,
+    handleWindowUpdate: (title: string, bounds: WindowBounds) => void
+  ) => {
+    for (const note in noteContent) {
+      const [title, content] = note
+      const bounds = appState.windows.windows[title]
+      WindowLayer.openNote(title, content, handleWindowUpdate, bounds)
+    }
   },
 
   checkNoteOpen: (title: string) => {
@@ -131,7 +158,12 @@ export const WindowLayer = {
     }
   },
 
-  openNote: async (title: string, content: string) => {
+  openNote: async (
+    title: string,
+    content: string,
+    handleWindowUpdate: (title: string, bounds: WindowBounds) => void,
+    bounds?: WindowBounds | undefined
+  ) => {
     console.log(`[WINDOW_LAYER] openNote(${title})`)
 
     const windowId = nextWindowId++
@@ -139,8 +171,10 @@ export const WindowLayer = {
     console.log(`[WINDOW_LAYER] WindowId: ${windowId}`)
 
     const noteWindow = new BrowserWindow({
-      width: 400,
-      height: 500,
+      x: bounds ? bounds.x : undefined,
+      y: bounds ? bounds.y : undefined,
+      width: bounds ? bounds.width : 400,
+      height: bounds ? bounds.height : 500,
       frame: false,
       transparent: true,
       alwaysOnTop: true,
@@ -178,6 +212,33 @@ export const WindowLayer = {
 
     noteWindow.setIgnoreMouseEvents(!appState.config.editable)
     noteWindow.setOpacity(appState.config.opacity)
+
+    const windowBounds = noteWindow.getBounds()
+
+    appState.windows.windows[title] = {
+      x: windowBounds.x,
+      y: windowBounds.y,
+      width: windowBounds.x,
+      height: windowBounds.y
+    }
+
+    noteWindow.on('resize', () => {
+      const title = appState.windows.noteToTitle.get(noteWindow)
+
+      if (title) {
+        const bounds = noteWindow.getBounds()
+        handleWindowUpdate(title, bounds)
+      } else console.error(`[WINDOW_LAYER] on => resize`)
+    })
+
+    noteWindow.on('move', () => {
+      const title = appState.windows.noteToTitle.get(noteWindow)
+
+      if (title) {
+        const bounds = noteWindow.getBounds()
+        handleWindowUpdate(title, bounds)
+      } else console.error(`[WINDOW_LAYER] on => move`)
+    })
 
     noteWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url)

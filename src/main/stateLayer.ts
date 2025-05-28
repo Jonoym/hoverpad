@@ -1,57 +1,32 @@
 // Receives information or will provide information about the state
 // Only needs to know about the data models - does not need to know about anything else
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron'
-import { ApplicationConfiguration, NoteDetails } from '@shared/types'
+import { ApplicationConfiguration, NoteDetails, WindowBounds } from '@shared/types'
 import { appState } from './state'
-
-// type WindowRegistry = {
-//   main: BrowserWindow | null
-//   notes: Set<BrowserWindow>
-// }
-
-// type WindowConfiguration = {
-//   title:
-// }
-
-// type FileRegistry = {
-//   activeTitles: Set<string>
-//   titleToFilename: Map<string, string>
-//   filenameToTitle: Map<string, string>
-// }
-
-// type ApplicationState = {
-//   windows: WindowRegistry
-//   windowBounds: Map<string, WindowConfiguration>
-//   files: FileRegistry
-//   config: ApplicationConfiguration
-// }
-
-// export const appState: ApplicationState = {
-//   windows: {
-//     main: null,
-//     notes: new Set()
-//   },
-//   windowBounds: new Map(),
-//   files: {
-//     activeTitles: new Set(),
-//     titleToFilename: new Map(),
-//     filenameToTitle: new Map()
-//   },
-//   config: {
-//     hidden: false,
-//     editable: true,
-//     opacity: 1,
-//     expanded: false
-//   }
-// }
 
 export const StateLayer = {
   saveConfig: (config: ApplicationConfiguration) => {
     console.log(`[STATE LAYER ] saveConfig(${JSON.stringify(config)})`)
     appState.config = config
     appState.config.hidden = false
+  },
 
-    console.log(JSON.stringify(appState.config))
+  removeWindow: (title: string) => {
+    console.log(`[STATE LAYER ] removeWindow(${title}})`)
+
+    delete appState.windows.windows[title]
+  },
+
+  updateWindowArrangement: (title: string, bounds: WindowBounds) => {
+    console.log(`[STATE LAYER ] updateWindowArrangement(${title}, ${JSON.stringify(bounds)})`)
+
+    appState.windows.windows[title] = bounds
+  },
+
+  saveWindowArrangement: (windowArrangement: Record<string, WindowBounds>) => {
+    console.log(`[STATE LAYER ] saveConfig(${JSON.stringify(windowArrangement)})`)
+
+    appState.windows.windows = windowArrangement
   },
 
   saveTitles: (titles: string[]) => {
@@ -89,8 +64,11 @@ export const StateLayer = {
       const window = BrowserWindow.fromWebContents(event.sender)
       if (window) {
         appState.windows.titleToNote.set(title, window)
-        if (previousTitle !== '' && title != previousTitle)
+        appState.windows.windows[title] = window.getBounds()
+        if (previousTitle !== '' && title != previousTitle) {
+          StateLayer.removeWindow(previousTitle)
           appState.windows.titleToNote.delete(previousTitle)
+        }
       } else console.error(`[STATE LAYER ]   Missing Window for ${previousTitle}`)
     }
   },

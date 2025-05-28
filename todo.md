@@ -1,7 +1,9 @@
 # Features To Add
 
 - [ ] Returns on APIs 
-- [ ] New line saving issues
+- [ ] Debouncing
+- [ ] Deleting
+- [ ] Download Font
 
 ## Overall
 - File preview                                  3

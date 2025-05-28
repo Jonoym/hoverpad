@@ -12,7 +12,7 @@ export const appState: ApplicationState = {
     controlPanel: null, // Reference to the Control Panel Window
     titleToNote: new Map(), // Mapping from Title to Note Windows
     noteToTitle: new Map(), // Mapping from Note Window to Titles
-    windows: [] // Current Window Configurations
+    windows: {} // Current Window Configurations
   },
   files: {
     titles: new Set() // Set of all Titles

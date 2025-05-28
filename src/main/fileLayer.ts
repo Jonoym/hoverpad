@@ -1,16 +1,18 @@
 // This file should only have information about the models that are being used
 // Everything else should not have side effects with the except of file saving
 import { homedir } from 'os'
-import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
+import { ensureDirSync, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
 import {
   appDirectoryName,
   configFilename,
   configurationsDirectoryName,
+  CONTROL_PANEL_ID,
   notesDirectoryName,
   windowsFilename
 } from '@shared/constants'
 import { ApplicationConfiguration, NoteDetails, WindowBounds } from '@shared/types'
 import { appState, DEFAULT_CONFIG } from './state'
+import { CONTROL_PANEL_CLOSED } from './windowLayer'
 
 const UNTITLED_ATTEMPT_MAX = 100
 
@@ -47,7 +49,7 @@ export const FileLayer = {
 
     const configDir = getConfigurationDirectory()
 
-    ensureDir(configDir)
+    ensureDirSync(configDir)
 
     try {
       const config = await readFile(`${configDir}/${windowsFilename}`, 'utf8')
@@ -58,11 +60,21 @@ export const FileLayer = {
     }
   },
 
-  saveWindowBounds: () => {
-    console.log(`[FILE LAYER] saveWindowBounds()`)
+  saveWindowArrangement: () => {
+    console.log(`[FILE LAYER] saveWindowArrangement()`)
     const configDir = getConfigurationDirectory()
 
-    ensureDir(configDir)
+    ensureDirSync(configDir)
+
+    console.log(appState.windows.windows)
+    console.log(appState.windows.noteToTitle)
+
+    // for (const key in appState.windows.windows.keys()) {
+    //   console.log(key)
+    //   console.log(JSON.stringify(appState.windows.windows[key]))
+    // }
+
+    console.log(`[FILE LAYER]   Windows: ${JSON.stringify(appState.windows.windows)}`)
 
     return writeFile(`${configDir}/${windowsFilename}`, JSON.stringify(appState.windows.windows))
   },
@@ -72,7 +84,7 @@ export const FileLayer = {
 
     const configDir = getConfigurationDirectory()
 
-    ensureDir(configDir)
+    ensureDirSync(configDir)
 
     try {
       const config = await readFile(`${configDir}/${configFilename}`, 'utf8')
@@ -83,11 +95,34 @@ export const FileLayer = {
     }
   },
 
-  saveConfig: () => {
+  getWindowArrangement: async (): Promise<Record<string, WindowBounds>> => {
+    console.log(`[FILE LAYER] getWindowArrangement()`)
+
+    const configDir = getConfigurationDirectory()
+
+    ensureDirSync(configDir)
+
+    try {
+      const config = await readFile(`${configDir}/${windowsFilename}`, 'utf8')
+      return JSON.parse(config) as Record<string, WindowBounds>
+    } catch (error) {
+      console.error(`[FILE LAYER]   Failed to load Config: ${error}`)
+      const defaultArrangement = {}
+      defaultArrangement[CONTROL_PANEL_ID] = {
+        x: 100,
+        y: 100,
+        width: CONTROL_PANEL_CLOSED.width,
+        height: CONTROL_PANEL_CLOSED.height
+      }
+      return defaultArrangement
+    }
+  },
+
+  saveConfig: async () => {
     console.log(`[FILE LAYER] saveConfig()`)
     const configDir = getConfigurationDirectory()
 
-    ensureDir(configDir)
+    ensureDirSync(configDir)
 
     return writeFile(`${configDir}/${configFilename}`, JSON.stringify(appState.config))
   },
@@ -98,7 +133,7 @@ export const FileLayer = {
 
     const notesDir = getNotesDirectory()
 
-    ensureDir(notesDir)
+    ensureDirSync(notesDir)
 
     await Promise.all([
       title !== previousTitle ? remove(`${notesDir}/${previousTitle}.md`) : Promise.resolve(),
@@ -106,12 +141,30 @@ export const FileLayer = {
     ])
   },
 
+  getNoteContentBatch: async (): Promise<Array<[string, string]>> => {
+    const titles = Object.keys(appState.windows.windows).filter(
+      (title) => title !== CONTROL_PANEL_ID
+    )
+
+    console.log(`[FILE LAYER] getNoteContent(${JSON.stringify(titles)})`)
+
+    const notesDir = getNotesDirectory()
+    ensureDirSync(notesDir)
+
+    return Promise.all(
+      titles.map(async (title): Promise<[string, string]> => {
+        const content = await readFile(`${notesDir}/${title}.md`, 'utf-8')
+        return [title, content]
+      })
+    )
+  },
+
   getNoteContent: async (title: string): Promise<string> => {
     console.log(`[FILE LAYER] getNoteContent(${title})`)
 
     const notesDir = getNotesDirectory()
 
-    ensureDir(notesDir)
+    ensureDirSync(notesDir)
 
     return await readFile(`${notesDir}/${title}.md`, 'utf-8')
   },
@@ -120,7 +173,7 @@ export const FileLayer = {
   getNotesList: async (): Promise<Array<NoteDetails>> => {
     const notesDir = getNotesDirectory()
 
-    ensureDir(notesDir)
+    ensureDirSync(notesDir)
 
     const notes = (await readdir(notesDir)).filter((file) => file.endsWith('.md'))
     return await Promise.all(notes.map((filename) => getNoteInfo(filename, notesDir)))

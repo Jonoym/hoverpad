@@ -17,7 +17,7 @@ export type WindowRegistry = {
   controlPanel: BrowserWindow | null
   titleToNote: Map<string, BrowserWindow>
   noteToTitle: Map<BrowserWindow, string>
-  windows: WindowBounds[]
+  windows: Record<string, WindowBounds>
 }
 
 export type FileRegistry = {

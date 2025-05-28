@@ -1,3 +1,5 @@
+export const CONTROL_PANEL_ID = 'CONTROL_PANEL'
+
 export const enum WindowType {
   Note = 'NOTE',
   ControlPanel = 'CONTROLS'

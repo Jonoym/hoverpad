@@ -1,4 +1,5 @@
 node_modules
+archive
 dist
 out
 .DS_Store

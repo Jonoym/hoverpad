@@ -1,0 +1,106 @@
+body {
+    background-color: black;
+    margin: 0
+}
+
+.logo-container {
+    height: 600px;
+    width: 600px;
+    background: white;
+}
+
+.transform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    transform: scaleX(1.415) scaleY(1.135) translateY(9px);
+}
+
+/* .hologram {
+    transform: rotate(45deg) translate(-50px, -50px);
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: linear-gradient(45deg, rgba(10, 10, 10, 0.2), rgba(34, 206, 206, 0.385));
+    border-radius: 30px;
+} */
+
+.hologram1 {
+    transform: rotate(45deg) translate(-146px, -130px);
+    position: absolute;
+    width: 18%;
+    height: 24%;
+    background: linear-gradient(46deg, rgba(161, 192, 255, 0.514), rgba(59, 79, 138, 0.886));
+    border-radius: 30px;
+    box-shadow: 4px 4px 0 rgba(59, 79, 138, 0.886);
+}
+
+.hologram1::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.hologram2 {
+    transform: rotate(45deg) translate(-50px, 30px);
+    position: absolute;
+    width: 50%;
+    height: 23%;
+    background: linear-gradient(46deg, rgba(195, 215, 255, 0.646), rgba(59, 79, 138, 0.886));
+    border-radius: 30px;
+    box-shadow: 4px 4px 0 rgba(59, 79, 138, 0.886);
+}
+
+.hologram2::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.hologram3 {
+    transform: rotate(45deg) translate(16px, -130px);
+    position: absolute;
+    width: 28%;
+    height: 23%;
+    background: linear-gradient(46deg, rgba(119, 136, 187, 0.886), rgba(39, 62, 125, 0.941));
+    border-radius: 30px;
+    box-shadow: 4px 4px 0 rgba(39, 62, 125, 0.941);
+}
+
+.hologram3::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.notepad {
+    transform: rotate(45deg) translate(25px, 25px) scale(1.1);
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background: linear-gradient(46deg, rgba(19, 20, 29, 0.847), rgba(118, 118, 118, 0.4));
+    border-radius: 50px;
+    box-shadow: 4px 4px 0 rgb(65, 65, 70);
+}
+
+.notepad::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('asfalt-dark.png'); /* use a seamless noise texture */
+    opacity: 0.10; /* tweak based on how strong you want the effect */
+    pointer-events: none;
+}

@@ -7,17 +7,25 @@ import { IpcMainInvokeEvent } from 'electron'
 import { FileLayer } from './fileLayer'
 import { StateLayer } from './stateLayer'
 import { WindowLayer } from './windowLayer'
+import { WindowBounds } from '@shared/types'
 
 // Dependencies are on the stateLayer and fileLayer
 
 const refreshWindowStates = async () => {
-  FileLayer.saveWindowBounds()
+  FileLayer.saveWindowArrangement()
 
   const notes = await FileLayer.getNotesList()
 
   const updateNoteDetails = StateLayer.updateActiveStatus(notes)
 
   WindowLayer.updateControlPanel(updateNoteDetails)
+}
+
+const handleWindowUpdate = async (title: string, bounds: WindowBounds) => {
+  console.log(`[ORCHESTRATOR] handleWindowUpdate(${title}, ${JSON.stringify(bounds)})`)
+  StateLayer.updateWindowArrangement(title, bounds)
+
+  FileLayer.saveWindowArrangement()
 }
 
 export const Orchestrator = {
@@ -28,10 +36,18 @@ export const Orchestrator = {
 
   // Windows
   createWindow: async () => {
-    const config = await FileLayer.getConfig()
-    StateLayer.saveConfig(config)
+    const [config, windowArrangement] = await Promise.all([
+      FileLayer.getConfig(),
+      FileLayer.getWindowArrangement()
+    ])
 
-    WindowLayer.createControlPanel()
+    StateLayer.saveConfig(config)
+    StateLayer.saveWindowArrangement(windowArrangement)
+
+    const content = await FileLayer.getNoteContentBatch()
+
+    WindowLayer.createControlPanel(handleWindowUpdate)
+    WindowLayer.openWindowArrangement(content, handleWindowUpdate)
 
     refreshWindowStates()
   },
@@ -78,7 +94,7 @@ export const Orchestrator = {
   createNote: async () => {
     const defaultTitle = FileLayer.getDefaultTitle()
 
-    WindowLayer.openNote(defaultTitle, '')
+    WindowLayer.openNote(defaultTitle, '', handleWindowUpdate)
 
     refreshWindowStates()
   },
@@ -86,13 +102,17 @@ export const Orchestrator = {
   openNote: async (_, title: string) => {
     const content = await FileLayer.getNoteContent(title)
 
-    if (!WindowLayer.checkNoteOpen(title)) WindowLayer.openNote(title, content)
+    if (!WindowLayer.checkNoteOpen(title)) WindowLayer.openNote(title, content, handleWindowUpdate)
     else WindowLayer.focusNote(title)
     refreshWindowStates()
   },
 
   closeNote: async (_, title: string) => {
     WindowLayer.closeNote(title)
+
+    StateLayer.removeWindow(title)
+
+    FileLayer.saveWindowArrangement()
 
     refreshWindowStates()
   },
