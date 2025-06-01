@@ -60,6 +60,7 @@
   background: var(--color-button);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: var(--padding-large);
   border-radius: var(--border-radius-large);
   border: var(--border-size) solid var(--color-border);
@@ -70,4 +71,42 @@
 
 .note-section-grid .note-button:hover {
    background: var(--bg-hover);
+}
+
+.note-button-label {
+  font: var(--font-primary);
+  font-size: var(--font-size-normal);
+  color: var(--color-text);
+  margin-left: var(--padding-medium);
+}
+
+.note-button-option {
+  border-radius: var(--border-radius-medium);
+  color: var(--color-text-disabled);
+  padding: var(--padding-small);
+  border: none;
+  background: transparent;
+}
+
+.note-button-option:hover {
+  color: var(--color-text-bright);
+  background: var(--bg-hover);
+}
+
+
+.note-button-option:hover .note-button-icon {
+  color: var(--color-red-strong);
+}
+
+.note-button-icon {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: var(--transition-fast);
 }

@@ -44,7 +44,7 @@ function Frame({ children, className }: FrameProps) {
 
   return (
     <div
-      className={`frame-container ${className}`}
+      className={`frame-container ${className ? className : ''}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

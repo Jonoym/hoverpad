@@ -77,7 +77,9 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
   }
 
   return (
-    <Frame className={`${isExpanded ? 'control-frame-expanded' : 'control-frame-closed'}`}>
+    <Frame
+      className={`transition ${isExpanded ? 'control-frame-expanded' : 'control-frame-closed'}`}
+    >
       <div className="control-panel-window">
         <div className={`control-panel spaced`}>
           <div className="control-panel-container centre">

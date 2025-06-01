@@ -12,6 +12,7 @@ import { WindowBounds } from '@shared/types'
 // Dependencies are on the stateLayer and fileLayer
 
 const refreshWindowStates = async () => {
+  console.log(`[ORCHESTRATOR    ] refreshWindowStates()`)
   FileLayer.saveWindowArrangement()
 
   const notes = await FileLayer.getNotesList()
@@ -22,7 +23,7 @@ const refreshWindowStates = async () => {
 }
 
 const handleWindowUpdate = async (title: string, bounds: WindowBounds) => {
-  console.log(`[ORCHESTRATOR] handleWindowUpdate(${title}, ${JSON.stringify(bounds)})`)
+  console.log(`[ORCHESTRATOR    ] handleWindowUpdate(${title}, ${JSON.stringify(bounds)})`)
   StateLayer.updateWindowArrangement(title, bounds)
 
   FileLayer.saveWindowArrangement()
@@ -30,12 +31,16 @@ const handleWindowUpdate = async (title: string, bounds: WindowBounds) => {
 
 export const Orchestrator = {
   initialiseState: async () => {
+    console.log(`[ORCHESTRATOR    ] initialiseState()`)
+
     const titles = (await FileLayer.getNotesList()).map((note) => note.title)
     StateLayer.saveTitles(titles)
   },
 
   // Windows
   createWindow: async () => {
+    console.log(`[ORCHESTRATOR    ] createWindow()`)
+
     const [config, windowArrangement] = await Promise.all([
       FileLayer.getConfig(),
       FileLayer.getWindowArrangement()
@@ -47,12 +52,16 @@ export const Orchestrator = {
     const content = await FileLayer.getNoteContentBatch()
 
     WindowLayer.createControlPanel(handleWindowUpdate)
-    WindowLayer.openWindowArrangement(content, handleWindowUpdate)
+    await WindowLayer.openWindowArrangement(content, handleWindowUpdate)
 
     refreshWindowStates()
   },
 
   closeWindow: async (event: IpcMainInvokeEvent) => {
+    console.log(`[ORCHESTRATOR    ] closeWindow()`)
+    const title = StateLayer.getWindowName(event)
+    StateLayer.removeWindow(title)
+
     WindowLayer.closeWindow(event)
 
     refreshWindowStates()
@@ -60,6 +69,7 @@ export const Orchestrator = {
 
   // Control Panel
   changeOpacity: async (_, opacity: number) => {
+    console.log(`[ORCHESTRATOR    ] changeOpacity()`)
     StateLayer.updateOpacity(opacity)
 
     WindowLayer.updateOpacity()
@@ -68,6 +78,7 @@ export const Orchestrator = {
   },
 
   toggleHide: async () => {
+    console.log(`[ORCHESTRATOR    ] toggleHide()`)
     StateLayer.toggleHide()
 
     WindowLayer.updateHide()
@@ -76,13 +87,16 @@ export const Orchestrator = {
   },
 
   toggleEdit: async () => {
+    console.log(`[ORCHESTRATOR    ] toggleEdit()`)
     StateLayer.toggleEdit()
 
     WindowLayer.updateEdit()
 
     FileLayer.saveConfig()
   },
+
   toggleExpand: async () => {
+    console.log(`[ORCHESTRATOR    ] toggleExpand()`)
     StateLayer.toggleExpand()
 
     WindowLayer.updateExpand()
@@ -92,27 +106,45 @@ export const Orchestrator = {
 
   // Note
   createNote: async () => {
+    console.log(`[ORCHESTRATOR    ] createNote()`)
+
     const defaultTitle = FileLayer.getDefaultTitle()
 
     WindowLayer.openNote(defaultTitle, '', handleWindowUpdate)
 
-    refreshWindowStates()
+    await FileLayer.saveNote(defaultTitle, defaultTitle, '')
+
+    const notes = await FileLayer.getNotesList()
+
+    const updateNoteDetails = StateLayer.updateActiveStatus(notes)
+
+    WindowLayer.updateControlPanel(updateNoteDetails)
   },
 
   openNote: async (_, title: string) => {
+    console.log(`[ORCHESTRATOR    ] openNote()`)
     const content = await FileLayer.getNoteContent(title)
 
     if (!WindowLayer.checkNoteOpen(title)) WindowLayer.openNote(title, content, handleWindowUpdate)
     else WindowLayer.focusNote(title)
-    refreshWindowStates()
+
+    const notes = await FileLayer.getNotesList()
+
+    const updateNoteDetails = StateLayer.updateActiveStatus(notes)
+
+    WindowLayer.updateControlPanel(updateNoteDetails)
   },
 
-  closeNote: async (_, title: string) => {
-    WindowLayer.closeNote(title)
+  deleteNote: async (_, title: string) => {
+    console.log(`[ORCHESTRATOR    ] deleteNote(${title})`)
 
     StateLayer.removeWindow(title)
 
-    FileLayer.saveWindowArrangement()
+    WindowLayer.closeNoteWindow(title)
+
+    StateLayer.deleteNote(title)
+
+    await FileLayer.deleteNote(title)
 
     refreshWindowStates()
   },
@@ -124,6 +156,9 @@ export const Orchestrator = {
     content: string
   ) => {
     if (title === '') return // TODO: Return Error
+    console.log(`[ORCHESTRATOR    ] saveNote()`)
+
+    WindowLayer.updateNoteTitle(event, title)
 
     StateLayer.saveNote(event, title, previousTitle)
 
@@ -134,6 +169,8 @@ export const Orchestrator = {
 
   // Notes
   refreshNotes: async () => {
+    console.log(`[ORCHESTRATOR    ] refreshNotes()`)
+
     refreshWindowStates()
   }
 }

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { LuSave, LuX, LuPenLine } from 'react-icons/lu'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { LuX, LuPenLine, LuLoaderCircle, LuCircle } from 'react-icons/lu'
 
 import { Divider, Editor, Frame } from '@renderer/components'
 import { handleClose } from '@renderer/functions'
 
 import './Note.css'
+import { debounce } from 'lodash'
 
 export interface WindowInfo {
   windowType: string
@@ -19,6 +20,7 @@ function Note({ windowInfo }: NoteProps) {
   const titleInputRef = useRef<HTMLInputElement>(null)
   const [isEditable, setIsEditable] = useState<boolean>(windowInfo.data.editable == 'true')
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
+  const [isSaved, setIsSaved] = useState<boolean>(true)
 
   const titleRef = useRef<string>(windowInfo.data.title)
   const previousTitleRef = useRef<string>(windowInfo.data.title)
@@ -31,7 +33,18 @@ function Note({ windowInfo }: NoteProps) {
       }
       setIsEditable(editable)
     })
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        console.log('Ctrl+S pressed, saving content...')
+        saveContent()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
     return () => {
+      window.removeEventListener('keydown', handleKeyDown)
       window.api.onToggleEdit(() => {})
     }
   }, [])
@@ -47,6 +60,8 @@ function Note({ windowInfo }: NoteProps) {
   const saveContent = () => {
     console.log(`Attempting to save content for Title: ${titleRef.current}`)
 
+    setIsSaved(true)
+
     if (!titleRef.current || titleRef.current === '') {
       console.error('Unable to save empty Title')
       return
@@ -56,6 +71,8 @@ function Note({ windowInfo }: NoteProps) {
 
     previousTitleRef.current = titleRef.current
   }
+
+  const debouncedSave = useMemo(() => debounce(saveContent, 1000), [])
 
   return (
     <Frame>
@@ -90,10 +107,16 @@ function Note({ windowInfo }: NoteProps) {
             </button>
             <Divider />
             <button
-              className="centre note-titlebar-option transition pointer"
-              onClick={saveContent}
+              disabled={isSaved}
+              className={`centre note-titlebar-option transition pointer save-button`}
             >
-              <LuSave className="note-titlebar-icon transition" />
+              {isSaved ? (
+                <LuCircle className={`note-titlebar-icon transition ${isSaved ? 'saved' : ''}`} />
+              ) : (
+                <LuLoaderCircle
+                  className={`note-titlebar-icon transition ${isSaved ? '' : 'loading'}`}
+                />
+              )}
             </button>
             <Divider />
             <button
@@ -107,7 +130,11 @@ function Note({ windowInfo }: NoteProps) {
         <div className="note-content">
           <Editor
             content={windowInfo.data.content}
-            setContent={(content) => (contentRef.current = content)}
+            setContent={(content) => {
+              contentRef.current = content
+              debouncedSave()
+            }}
+            setEditing={() => setIsSaved(false)}
           />
         </div>
         <div className="note-footer" />

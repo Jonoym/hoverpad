@@ -1,7 +1,7 @@
 {
   "name": "hoverpad",
-  "version": "0.0.2",
-  "description": "An Electron application with React and TypeScript",
+  "version": "0.0.4",
+  "description": "A simple overlay Markdown editor",
   "main": "./out/main/index.js",
   "author": "Jonoym",
   "homepage": "https://github.com/Jonoym/hoverpad",

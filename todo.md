@@ -2,8 +2,6 @@
 
 - [ ] Returns on APIs 
 - [ ] Debouncing
-- [ ] Deleting
-- [ ] Download Font
 
 ## Overall
 - File preview                                  3

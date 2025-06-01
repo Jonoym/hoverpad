@@ -20,6 +20,7 @@ html body {
 
   --color-white: rgba(255, 255, 255, 1);
   --color-text: rgba(200, 200, 200, 0.9);
+  --color-text-disabled: rgba(200, 200, 200, 0.5);
   --color-text-bright: rgb(230, 230, 230);
   --color-text-code: #6596d6;
   --color-text-code-selected: #3a5f7a95;
@@ -34,6 +35,7 @@ html body {
   --color-green-active: rgba(28, 183, 103, 0.24);
   --color-red: rgba(122, 41, 41, 0.15);
   --color-red-active: rgba(163, 32, 32, 0.228);
+  --color-red-strong: rgb(183, 42, 42);
   --color-button: rgba(50, 54, 62, 0.7);
 
   --bg-titlebar: rgba(112, 159, 252, 0.324);
@@ -148,4 +150,13 @@ h4 {
 
 .transition-fast {
   transition: var(--transition-fast);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

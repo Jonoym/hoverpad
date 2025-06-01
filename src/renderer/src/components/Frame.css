@@ -8,7 +8,7 @@
   position: relative;
   border: 1px solid var(--color-border);
   overflow: hidden;
-  transition: var(--transition-default);
+  animation: fade-in 0.5s ease-in forwards;
 }
 
 .title-bar {

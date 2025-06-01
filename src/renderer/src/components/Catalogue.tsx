@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import './catalogue.css'
 import Divider from './Divider'
 import { NoteDetails } from '@shared/types'
+import { LuTrash2 } from 'react-icons/lu'
 
 interface CatalogueProps {
   notes: Array<NoteDetails>
@@ -16,7 +17,10 @@ function Catalogue({ notes }: CatalogueProps) {
     window.api.openNote(title)
   }
 
-  console.log(notes)
+  const deleteNote = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, title: string) => {
+    event.stopPropagation()
+    window.api.deleteNote(title)
+  }
 
   return (
     <div className="note-catalogue transition no-drag">
@@ -33,7 +37,13 @@ function Catalogue({ notes }: CatalogueProps) {
                 className="note-button transition-fast"
                 onClick={() => openNote(note.title)}
               >
-                {note.title}
+                <div className="note-button-label">{note.title}</div>
+                <button
+                  className="centre note-button-option no-drag transition pointer"
+                  onClick={(event) => deleteNote(event, note.title)}
+                >
+                  <LuTrash2 className="note-button-icon" />
+                </button>
               </button>
             ))}
         </div>
@@ -51,7 +61,13 @@ function Catalogue({ notes }: CatalogueProps) {
                 className="note-button transition-fast"
                 onClick={() => openNote(note.title)}
               >
-                {note.title}
+                <div className="note-button-label">{note.title}</div>
+                <button
+                  className="centre note-button-option no-drag transition pointer"
+                  onClick={(event) => deleteNote(event, note.title)}
+                >
+                  <LuTrash2 className="note-button-icon" />
+                </button>
               </button>
             ))}
         </div>

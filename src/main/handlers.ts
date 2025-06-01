@@ -4,9 +4,9 @@
 import { ipcMain, globalShortcut } from 'electron'
 import {
   CHANGE_OPACITY,
-  CLOSE_NOTE,
   CLOSE_WINDOW,
   CREATE_NOTE,
+  DELETE_NOTE,
   OPEN_NOTE,
   REFRESH_NOTES,
   SAVE_NOTE,
@@ -38,7 +38,7 @@ export const initialiseHandlers = () => {
   // Window State Changes
   ipcMain.handle(CREATE_NOTE, Orchestrator.createNote)
   ipcMain.handle(OPEN_NOTE, Orchestrator.openNote)
-  ipcMain.handle(CLOSE_NOTE, Orchestrator.closeNote)
+  ipcMain.handle(DELETE_NOTE, Orchestrator.deleteNote)
   ipcMain.handle(SAVE_NOTE, Orchestrator.saveNote)
 
   // Notes
