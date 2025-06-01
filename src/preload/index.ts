@@ -4,6 +4,7 @@ import {
   CHANGE_OPACITY,
   CLOSE_WINDOW,
   CREATE_NOTE,
+  DELETE_NOTE,
   OPEN_NOTE,
   REFRESH_NOTES,
   SAVE_NOTE,
@@ -21,6 +22,7 @@ const api = {
   createNote: () => ipcRenderer.invoke(CREATE_NOTE),
   closeWindow: () => ipcRenderer.invoke(CLOSE_WINDOW),
   openNote: (title: string) => ipcRenderer.invoke(OPEN_NOTE, title),
+  deleteNote: (title: string) => ipcRenderer.invoke(DELETE_NOTE, title),
 
   // Toggle functionality APIs
   toggleHide: () => ipcRenderer.invoke(TOGGLE_HIDE),

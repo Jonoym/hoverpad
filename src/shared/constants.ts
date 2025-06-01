@@ -15,6 +15,7 @@ export const CLOSE_WINDOW = 'close-window'
 
 export const SAVE_NOTE = 'save-note'
 export const OPEN_NOTE = 'open-note'
+export const DELETE_NOTE = 'delete-note'
 export const CLOSE_NOTE = 'close-note'
 export const REFRESH_NOTES = 'refresh-notes'
 
@@ -24,6 +25,7 @@ export const SEND_NOTES_LIST = 'send-notes-list'
 export const SEND_WINDOWS_INFORMATION = 'send-windows-info'
 
 // Configuration Names
+export const applicationName = 'Hoverpad'
 export const appDirectoryName = '.hoverpad'
 export const configurationsDirectoryName = 'config'
 export const notesDirectoryName = 'notes'

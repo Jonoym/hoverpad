@@ -7,6 +7,7 @@ interface API {
   changeOpacity(opacity: number): Promise<{ success: boolean; error?: string }>
   createNote: () => Promise<{ success: boolean; error?: string }>
   openNote: (title: string) => Promise<{ success: boolean; windowId?: number; error?: string }>
+  deleteNote: (title: string) => Promise<{ success: boolean; error?: string }>
 
   closeWindow: () => Promise<{ success: boolean; error?: string }>
   toggleHide: () => Promise<{ success: boolean; error?: string }>

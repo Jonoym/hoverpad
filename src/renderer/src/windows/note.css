@@ -19,7 +19,7 @@
 .note-titlebar input {
   height: 100%;
   width: 100%;
-  -webkit-app-region: none; 
+  -webkit-app-region: none;
   padding: var(--padding-small) var(--padding-medium);
   margin-right: var(--padding-medium);
   border-radius: var(--border-radius-small);
@@ -72,7 +72,6 @@
   height: 100%;
   display: flex;
   align-items: center;
-  gap: var(--gapsize-small);
 }
 
 .note-titlebar-option {
@@ -90,6 +89,50 @@
 
 .note-titlebar-option:hover .note-titlebar-icon {
   color: var(--color-text-bright);
+}
+
+.save-button:hover {
+  background: transparent;
+  cursor: auto;
+}
+
+.save-button:hover .note-titlebar-icon {
+  color: auto;
+}
+
+.save-button .saved {
+  opacity: 0;
+  color: rgb(56, 178, 56);
+  animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.save-button:hover .saved {
+  color: rgb(56, 178, 56);
+}
+
+.save-button .loading {
+  opacity: 0;
+  color: rgb(169, 42, 42);
+  animation: spin 2s ease-in-out infinite, fade-in 0.5s ease-in-out forwards;
+}
+
+.save-button:hover .loading {
+  color: rgb(169, 42, 42);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .note-container {
