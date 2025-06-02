@@ -17,6 +17,7 @@ import {
 } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import './editor.css'
+import { codeblockLanguages } from './editorLanguages'
 
 interface EditorProps {
   content: string
@@ -42,10 +43,7 @@ function Editor({ content, setContent, setEditing }: EditorProps) {
         listsPlugin(),
         codeBlockPlugin({ defaultCodeBlockLanguage: 'markdown' }),
         codeMirrorPlugin({
-          codeBlockLanguages: {
-            markdown: 'Markdown',
-            txt: 'Plain Text'
-          }
+          codeBlockLanguages: codeblockLanguages
         }),
         thematicBreakPlugin(),
         tablePlugin(),

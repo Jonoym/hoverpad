@@ -1,19 +1,14 @@
 # Features To Add
 
 - [ ] Returns on APIs 
-- [ ] Debouncing
 
 ## Overall
-- File preview                                  3
-- Configuration Savings                         3
+- File preview                                  4
 
 ## Text Editor
 - Text Search                                   4
-- Saving Loader                                 2
-- Debouncing
 
 ## Low Priority
-- Continued hover after click
 - Settings?
     - Color
     - Fonts?

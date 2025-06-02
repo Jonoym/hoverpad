@@ -102,31 +102,22 @@
 
 .save-button .saved {
   opacity: 0;
-  color: rgb(56, 178, 56);
+  color: rgb(95, 182, 95);
   animation: fade-in 0.5s ease-in-out forwards;
 }
 
 .save-button:hover .saved {
-  color: rgb(56, 178, 56);
+  color: rgb(95, 182, 95);
 }
 
 .save-button .loading {
   opacity: 0;
-  color: rgb(169, 42, 42);
-  animation: spin 2s ease-in-out infinite, fade-in 0.5s ease-in-out forwards;
+  color: var(--color-text);
+  animation: spin 1.5s linear infinite, fade-in 0.5s ease-in-out forwards;
 }
 
 .save-button:hover .loading {
-  color: rgb(169, 42, 42);
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  color: var(--color-text);
 }
 
 @keyframes spin {

@@ -1,6 +1,6 @@
 {
   "name": "hoverpad",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A simple overlay Markdown editor",
   "main": "./out/main/index.js",
   "author": "Jonoym",
@@ -47,7 +47,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
-    "@mdxeditor/editor": "^3.31.1",
+    "@mdxeditor/editor": "^3.35.0",
     "fs-extra": "^11.3.0",
     "lodash": "^4.17.21",
     "react-icons": "^5.5.0"
