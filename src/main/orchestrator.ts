@@ -172,5 +172,25 @@ export const Orchestrator = {
     console.log(`[ORCHESTRATOR    ] refreshNotes()`)
 
     refreshWindowStates()
+  },
+
+  decreaseOpacity: () => {
+    console.log(`[ORCHESTRATOR    ] decreaseOpacity()`)
+
+    const updatedOpacity = Math.max(0.2, StateLayer.getOpacity() - 0.1)
+
+    Orchestrator.changeOpacity(null, updatedOpacity)
+
+    WindowLayer.broadcastOpacity(updatedOpacity)
+  },
+
+  increaseOpacity: () => {
+    console.log(`[ORCHESTRATOR    ] increaseOpacity()`)
+
+    const updatedOpacity = Math.min(1, StateLayer.getOpacity() + 0.1)
+
+    Orchestrator.changeOpacity(null, updatedOpacity)
+
+    WindowLayer.broadcastOpacity(updatedOpacity)
   }
 }

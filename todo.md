@@ -1,6 +1,20 @@
 # Features To Add
 
-- [ ] Returns on APIs 
+- [ ] Returns on APIs (file name in use and saving status)
+- [ ] Fix issue with changing to edit and not being able to update 
+- [X] decrease control panel height
+- [X] add hotkeys for opacity changes
+- [ ] text search
+- [X] remove settings
+- [ ] last opened position?
+- [X] follow mac focus screen
+- [X] visible on full screen
+- [ ] decrease notepad size
+- [ ] opacity hotkey guide
+- [ ] images
+
+- [ ] fix preview section
+- [ ] highlight on opened ones
 
 ## Overall
 - File preview                                  4

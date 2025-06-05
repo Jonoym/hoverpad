@@ -7,7 +7,6 @@ import {
   LuEye,
   LuSunMoon,
   LuClipboardPlus,
-  LuSettings,
   LuFileStack,
   LuChevronUp,
   LuX
@@ -28,7 +27,6 @@ interface ControlPanelProps {
 }
 
 function ControlPanel({ windowInfo }: ControlPanelProps) {
-  console.log(windowInfo)
   const [opacity, setOpacity] = useState(Number(windowInfo.data.opacity) * 100)
   const [isEditable, setIsEditable] = useState(windowInfo.data.editable === 'true')
   const [isExpanded, setIsExpanded] = useState(windowInfo.data.expanded === 'true')
@@ -43,8 +41,14 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
       setNotes(notes)
     })
 
+    window.api.onOpacity((opacity: number): void => {
+      setOpacity(opacity * 100)
+    })
+
     return () => {
       window.api.onToggleEdit(() => {})
+      window.api.onNotesList(() => {})
+      window.api.onOpacity(() => {})
     }
   }, [])
 
@@ -145,10 +149,6 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
               onClick={toggleExpand}
             >
               <LuFileStack className="control-panel-icon transition" />
-            </button>
-            <Divider vertical />
-            <button className="centre control-panel-option no-drag transition pointer">
-              <LuSettings className="control-panel-icon transition" />
             </button>
             <Divider vertical />
             <button

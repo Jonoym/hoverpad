@@ -99,5 +99,9 @@ export const StateLayer = {
       if (!appState.windows.titleToNote.has(note.title)) note.active = false
     }
     return noteDetails
+  },
+
+  getOpacity: (): number => {
+    return appState.config.opacity
   }
 }

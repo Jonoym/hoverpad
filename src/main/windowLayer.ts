@@ -7,7 +7,8 @@ import {
   WindowType,
   SEND_TOGGLE_EDIT,
   SEND_NOTES_LIST,
-  CONTROL_PANEL_ID
+  CONTROL_PANEL_ID,
+  SEND_OPACITY
 } from '@shared/constants'
 import { NoteDetails, WindowBounds } from '@shared/types'
 import { BrowserWindow, IpcMainInvokeEvent, shell } from 'electron'
@@ -15,14 +16,14 @@ import { join } from 'path'
 import { appState } from './state'
 let nextWindowId = 1
 export const CONTROL_PANEL_CLOSED: WindowBounds = {
-  width: 883,
-  height: 62,
+  width: 700,
+  height: 45,
   x: 100,
   y: 100
 }
 
 export const CONTROL_PANEL_OPEN: WindowBounds = {
-  width: 883,
+  width: 700,
   height: 500,
   x: 100,
   y: 100
@@ -137,6 +138,8 @@ export const WindowLayer = {
 
     appState.windows.controlPanel = controlPanelWindow
     controlPanelWindow.setOpacity(appState.config.opacity)
+    controlPanelWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+    controlPanelWindow.setMenuBarVisibility(false)
 
     controlPanelWindow.on('closed', () => {
       appState.windows.controlPanel = null
@@ -242,6 +245,7 @@ export const WindowLayer = {
 
     noteWindow.setIgnoreMouseEvents(!appState.config.editable)
     noteWindow.setOpacity(appState.config.opacity)
+    noteWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 
     const windowBounds = noteWindow.getBounds()
 
@@ -349,5 +353,12 @@ export const WindowLayer = {
 
     if (appState.windows.controlPanel === null) return
     appState.windows.controlPanel.webContents.send(SEND_NOTES_LIST, notes)
+  },
+
+  broadcastOpacity: (opacity: number) => {
+    console.log(`    [WINDOW LAYER] broadcastOpacity()`)
+
+    if (appState.windows.controlPanel === null) return
+    appState.windows.controlPanel.webContents.send(SEND_OPACITY, opacity)
   }
 }

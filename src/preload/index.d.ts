@@ -17,6 +17,7 @@ interface API {
 
   onToggleEdit: (callback: (editable: boolean) => void) => void
   onNotesList: (callback: (notes: Array<NoteInfo>) => void) => void
+  onOpacity: (callback: (opacity: number) => void) => void
   saveContent: (
     title: string,
     previousTitle: string,

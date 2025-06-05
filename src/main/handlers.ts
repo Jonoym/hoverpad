@@ -22,6 +22,8 @@ export const initialiseShortcuts = () => {
   globalShortcut.register('CommandOrControl+H', Orchestrator.toggleHide)
   globalShortcut.register('CommandOrControl+E', Orchestrator.toggleEdit)
   globalShortcut.register('CommandOrControl+N', Orchestrator.createNote)
+  globalShortcut.register('CommandOrControl+,', Orchestrator.decreaseOpacity)
+  globalShortcut.register('CommandOrControl+.', Orchestrator.increaseOpacity)
 }
 
 export const initialiseState = Orchestrator.initialiseState

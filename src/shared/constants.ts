@@ -23,6 +23,7 @@ export const REFRESH_NOTES = 'refresh-notes'
 export const SEND_TOGGLE_EDIT = 'send-toggle-edit'
 export const SEND_NOTES_LIST = 'send-notes-list'
 export const SEND_WINDOWS_INFORMATION = 'send-windows-info'
+export const SEND_OPACITY = 'send-opacity'
 
 // Configuration Names
 export const applicationName = 'Hoverpad'

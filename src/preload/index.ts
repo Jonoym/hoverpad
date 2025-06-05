@@ -9,6 +9,7 @@ import {
   REFRESH_NOTES,
   SAVE_NOTE,
   SEND_NOTES_LIST,
+  SEND_OPACITY,
   SEND_TOGGLE_EDIT,
   TOGGLE_EDIT,
   TOGGLE_EXPAND,
@@ -39,6 +40,8 @@ const api = {
     ipcRenderer.on(SEND_TOGGLE_EDIT, (_event, value) => callback(value)),
   onNotesList: (callback: (notes: Array<NoteDetails>) => void) =>
     ipcRenderer.on(SEND_NOTES_LIST, (_event, value) => callback(value)),
+  onOpacity: (callback: (opacity: number) => void) =>
+    ipcRenderer.on(SEND_OPACITY, (_event, value) => callback(value)),
 
   getWindowInfo: () => {
     // Parse query parameters to get window type and ID
