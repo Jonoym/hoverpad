@@ -140,6 +140,8 @@ export const WindowLayer = {
     controlPanelWindow.setOpacity(appState.config.opacity)
     controlPanelWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
     controlPanelWindow.setMenuBarVisibility(false)
+    controlPanelWindow.setAlwaysOnTop(true, 'screen-saver')
+    controlPanelWindow.setSkipTaskbar(true)
 
     controlPanelWindow.on('closed', () => {
       appState.windows.controlPanel = null
@@ -246,6 +248,7 @@ export const WindowLayer = {
     noteWindow.setIgnoreMouseEvents(!appState.config.editable)
     noteWindow.setOpacity(appState.config.opacity)
     noteWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+    noteWindow.setAlwaysOnTop(true, 'screen-saver')
 
     const windowBounds = noteWindow.getBounds()
 

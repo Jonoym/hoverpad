@@ -9,6 +9,7 @@
 - [ ] last opened position?
 - [X] follow mac focus screen
 - [X] visible on full screen
+- [X] prevent alt-tabbing
 - [ ] decrease notepad size
 - [ ] opacity hotkey guide
 - [ ] images
