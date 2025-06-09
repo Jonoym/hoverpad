@@ -3,8 +3,10 @@ import {
   Cell,
   Signal,
   rootEditor$,
+  addComposerChild$,
+  addExportVisitor$,
   createRootEditorSubscription$,
-  addComposerChild$
+  Realm
 } from '@mdxeditor/editor'
 import {
   $nodesOfType,
@@ -14,7 +16,7 @@ import {
   $getSelection,
   type LexicalEditor,
   $createTextNode,
-  TextFormatType
+  TextFormatType,
 } from 'lexical'
 import { SearchUI } from './Search'
 
@@ -30,6 +32,7 @@ interface SearchState {
   searchTerm: string
   matches: SearchMatch[]
   currentMatchIndex: number
+  terminating: boolean
   isVisible: boolean
 }
 
@@ -38,6 +41,7 @@ export const searchState$ = Cell<SearchState>({
   searchTerm: '',
   matches: [],
   currentMatchIndex: -1,
+  terminating: false,
   isVisible: false
 })
 
@@ -105,7 +109,8 @@ function splitAndHighlightTextNode(
       const newNode = $createTextNode(segment.text)
 
       if (segment.isHighlight) {
-        newNode.setFormat(SEARCH_HIGHLIGHT_FORMAT)
+        newNode.setFormat(textNode.getFormat())
+        newNode.toggleFormat(SEARCH_HIGHLIGHT_FORMAT)
       }
 
       textNode.insertAfter(newNode)
@@ -127,6 +132,8 @@ function clearSearchHighlights(editor: LexicalEditor): void {
           // Remove formatting but keep the text
           const text = node.getTextContent()
           const newNode = $createTextNode(text)
+          newNode.setFormat(node.getFormat())
+          node.toggleFormat(SEARCH_HIGHLIGHT_FORMAT)
           node.replace(newNode)
         }
       })
@@ -145,13 +152,14 @@ export const performSearch$ = Signal<string>((r) => {
 
     if (!editor) return
 
-    clearSearchHighlights(editor)
+    // clearSearchHighlights(editor)
 
     if (!searchTerm.trim()) {
       r.pub(searchState$, {
         searchTerm: '',
         matches: [],
         currentMatchIndex: -1,
+        terminating: false,
         isVisible: true
       })
       return
@@ -207,21 +215,21 @@ export const performSearch$ = Signal<string>((r) => {
           })
 
           // Second pass: apply highlighting
-          for (const [nodeKey, matchesInNode] of nodeMatches) {
-            const node = editor.getEditorState().read(() => {
-              return textNodes.find((n) => n.getKey() === nodeKey)
-            })
+          // for (const [nodeKey, matchesInNode] of nodeMatches) {
+          //   const node = editor.getEditorState().read(() => {
+          //     return textNodes.find((n) => n.getKey() === nodeKey)
+          //   })
 
-            if (node && node.isAttached()) {
-              const highlightData = matchesInNode.map((match) => ({
-                startOffset: match.startOffset,
-                endOffset: match.endOffset,
-                isCurrent: match.matchIndex === 0 // First match is current
-              }))
+          //   if (node && node.isAttached()) {
+          //     const highlightData = matchesInNode.map((match) => ({
+          //       startOffset: match.startOffset,
+          //       endOffset: match.endOffset,
+          //       isCurrent: match.matchIndex === 0 // First match is current
+          //     }))
 
-              splitAndHighlightTextNode(node, highlightData)
-            }
-          }
+          //     splitAndHighlightTextNode(node, highlightData)
+          //   }
+          // }
         } catch (error) {
           console.debug('Search error:', error)
         }
@@ -232,91 +240,101 @@ export const performSearch$ = Signal<string>((r) => {
       }
     )
 
-    r.pub(searchState$, {
+    const state = {
       searchTerm,
       matches,
       currentMatchIndex: matches.length > 0 ? 0 : -1,
+      terminating: false,
       isVisible: true
-    })
+    }
+
+    r.pub(searchState$, state)
   })
 })
+
+const navigate = (r: Realm, state: SearchState, editor: LexicalEditor, direction: string) => {
+  if (state.matches.length === 0) return
+
+  let newIndex = state.currentMatchIndex
+
+  if (direction === 'next') {
+    newIndex = (state.currentMatchIndex + 1) % state.matches.length
+  } else if (direction === 'prev') {
+    newIndex = state.currentMatchIndex <= 0 ? state.matches.length - 1 : state.currentMatchIndex - 1
+  } else {
+    newIndex = state.currentMatchIndex
+  }
+
+  // Scroll to and select the match
+  const match = state.matches[newIndex]
+  if (match) {
+    editor.update(
+      () => {
+        // Check if the node still exists and is valid
+        const node = match.node
+        if (!node || !node.isAttached()) {
+          return
+        }
+
+        const selection = $createRangeSelection()
+
+        // Ensure offsets are within bounds
+        const textContent = node.getTextContent()
+        const safeStartOffset = Math.min(match.startOffset, textContent.length)
+        const safeEndOffset = Math.min(match.endOffset, textContent.length)
+
+        selection.anchor.set(node.getKey(), safeStartOffset, 'text')
+        selection.focus.set(node.getKey(), safeEndOffset, 'text')
+        $setSelection(selection)
+      },
+      {
+        discrete: true, // Prevent this update from being merged with user input
+        tag: 'search-navigation' // Tag for search operations
+      }
+    )
+
+    // Scroll the match into view with better error handling
+    setTimeout(() => {
+      try {
+        const selection = editor.getEditorState().read(() => $getSelection())
+        if (selection && selection.isCollapsed() === false) {
+          const domSelection = window.getSelection()
+          if (domSelection && domSelection.rangeCount > 0) {
+            const range = domSelection.getRangeAt(0)
+            const rect = range.getBoundingClientRect()
+            if (rect.top < 0 || rect.bottom > window.innerHeight) {
+              const element =
+                range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+                  ? range.commonAncestorContainer.parentElement
+                  : (range.commonAncestorContainer as Element)
+
+              element?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              })
+            }
+          }
+        }
+      } catch (error) {
+        console.debug('Search scroll error:', error)
+      }
+    }, 50)
+  }
+
+  r.pub(searchState$, {
+    ...state,
+    currentMatchIndex: newIndex
+  })
+}
 
 export const navigateToMatch$ = Signal<'next' | 'prev'>((r) => {
   r.sub(navigateToMatch$, (direction) => {
     const state = r.getValue(searchState$)
     const editor = r.getValue(rootEditor$)
 
-    if (!editor || state.matches.length === 0) return
+    if (!editor) return
 
-    let newIndex = state.currentMatchIndex
-
-    if (direction === 'next') {
-      newIndex = (state.currentMatchIndex + 1) % state.matches.length
-    } else {
-      newIndex =
-        state.currentMatchIndex <= 0 ? state.matches.length - 1 : state.currentMatchIndex - 1
-    }
-
-    // Scroll to and select the match
-    const match = state.matches[newIndex]
-    if (match) {
-      editor.update(
-        () => {
-          // Check if the node still exists and is valid
-          const node = match.node
-          if (!node || !node.isAttached()) {
-            return
-          }
-
-          const selection = $createRangeSelection()
-
-          // Ensure offsets are within bounds
-          const textContent = node.getTextContent()
-          const safeStartOffset = Math.min(match.startOffset, textContent.length)
-          const safeEndOffset = Math.min(match.endOffset, textContent.length)
-
-          selection.anchor.set(node.getKey(), safeStartOffset, 'text')
-          selection.focus.set(node.getKey(), safeEndOffset, 'text')
-          $setSelection(selection)
-        },
-        {
-          discrete: true, // Prevent this update from being merged with user input
-          tag: 'search-navigation' // Tag for search operations
-        }
-      )
-
-      // Scroll the match into view with better error handling
-      setTimeout(() => {
-        try {
-          const selection = editor.getEditorState().read(() => $getSelection())
-          if (selection && selection.isCollapsed() === false) {
-            const domSelection = window.getSelection()
-            if (domSelection && domSelection.rangeCount > 0) {
-              const range = domSelection.getRangeAt(0)
-              const rect = range.getBoundingClientRect()
-              if (rect.top < 0 || rect.bottom > window.innerHeight) {
-                const element =
-                  range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-                    ? range.commonAncestorContainer.parentElement
-                    : (range.commonAncestorContainer as Element)
-
-                element?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'center'
-                })
-              }
-            }
-          }
-        } catch (error) {
-          console.debug('Search scroll error:', error)
-        }
-      }, 50)
-    }
-
-    r.pub(searchState$, {
-      ...state,
-      currentMatchIndex: newIndex
-    })
+    navigate(r, state, editor, direction)
   })
 })
 
@@ -325,6 +343,7 @@ export const toggleSearchVisibility$ = Signal<boolean>((r) => {
     const state = r.getValue(searchState$)
     r.pub(searchState$, {
       ...state,
+      terminating: false,
       isVisible
     })
   })
@@ -338,10 +357,10 @@ export const textSearchPlugin = realmPlugin({
       [addComposerChild$]: () => <SearchUI />
     })
 
-    // Listen for editor updates to close search when user types
     r.pub(createRootEditorSubscription$, (editor: LexicalEditor) => {
       return editor.registerUpdateListener(({ tags }) => {
         // Only close search if this is NOT a search-related update
+        console.log(tags)
         const isSearchUpdate =
           tags.has('search-apply-highlights') ||
           tags.has('search-clear-highlights') ||
@@ -351,8 +370,14 @@ export const textSearchPlugin = realmPlugin({
           const state = r.getValue(searchState$)
           if (state.isVisible) {
             // Clear highlights and close search
-            // clearSearchHighlights(editor)
-            console.log($getSelection())
+            clearSearchHighlights(editor)
+            r.pub(searchState$, {
+              searchTerm: '',
+              matches: [],
+              currentMatchIndex: -1,
+              terminating: true,
+              isVisible: true
+            })
           }
         }
       })

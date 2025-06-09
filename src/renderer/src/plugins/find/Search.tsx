@@ -37,7 +37,7 @@ export function SearchUI() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
         e.preventDefault()
         if (searchState.isVisible) {
           closeSearch()
@@ -58,6 +58,15 @@ export function SearchUI() {
     }
   })
 
+  useEffect(() => {
+    if (searchState.terminating) {
+      setTimeout(() => {
+        toggleVisibility(false)
+        setInputVisibility(false)
+      }, 200)
+    }
+  }, [searchState.terminating, toggleVisibility])
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
@@ -75,7 +84,9 @@ export function SearchUI() {
   )
 
   return searchState.isVisible ? (
-    <div className={`search-container transition ${inputVisible ? '' : 'input-disappear'}`}>
+    <div
+      className={`search-container transition ${inputVisible && !searchState.terminating ? '' : 'input-disappear'}`}
+    >
       <input
         ref={searchRef}
         type="text"
@@ -83,7 +94,6 @@ export function SearchUI() {
         onKeyDown={handleKeyDown}
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
-        onBlur={() => closeSearch()}
         autoFocus
       />
       {searchState.matches.length > 0 && (

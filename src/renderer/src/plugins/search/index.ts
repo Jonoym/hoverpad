@@ -42,7 +42,7 @@ export const highlightPlugin = realmPlugin<HighlightPluginOptions>({
     if (!currentEditor) {
       return
     }
-
+    
     // Register listener for textNodes
     currentEditor.registerNodeTransform(TextNode, (textNode) => {
       // This transform runs twice but does nothing the first time because it doesn't meet the preconditions
