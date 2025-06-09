@@ -48,6 +48,10 @@ export const StateLayer = {
     appState.windows.windows = windowArrangement
   },
 
+  titleAvailable: (title: string): boolean => {
+    return !appState.files.titles.has(title)
+  },
+
   saveTitles: (titles: string[]) => {
     console.log(`    [STATE LAYER ] saveTitles(${JSON.stringify(titles)})`)
 

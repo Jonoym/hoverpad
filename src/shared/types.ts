@@ -1,5 +1,10 @@
 import { BrowserWindow } from 'electron'
 
+export type Response = {
+  success: boolean
+  error?: string
+}
+
 export type NoteDetails = {
   title: string
   active: boolean

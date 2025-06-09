@@ -66,10 +66,13 @@ body {
   --color-green: rgb(32, 66, 49);
   --color-green-active: rgb(40, 84, 61);
   --color-light-green: rgb(99, 183, 99);
+  --color-green-background: rgba(0, 255, 0, 0.1);
 
   --color-red: rgb(51, 28, 28);
   --color-red-active: rgb(63, 33, 33);
-  --color-red-strong: rgb(183, 42, 42); /* change */
+  --color-red-strong: rgb(183, 42, 42);
+  --color-light-red: rgb(130, 36, 36);
+  --color-red-background: rgba(255, 0, 0, 0.10);
   
   --color-button: var(--color-space-grey-100);
   --color-button-primary: var(--color-primary-dark);
@@ -211,4 +214,48 @@ h4 {
   to {
     opacity: 0;
   }
+}
+
+.tooltip-container {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  display: flex;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  text-align: center;
+  border-radius: 6px;
+  padding: 4px 8px;
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10%);
+  white-space: nowrap;
+
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.tooltip-text-error {
+  background-color: var(--color-red-background);
+}
+
+.tooltip-text-neutral {
+  background-color: var(--color-translucent);
+}
+
+.tooltip-text-success {
+  background-color: var(--color-green-background);
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }

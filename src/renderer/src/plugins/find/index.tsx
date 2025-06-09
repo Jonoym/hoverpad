@@ -4,7 +4,6 @@ import {
   Signal,
   rootEditor$,
   addComposerChild$,
-  addExportVisitor$,
   createRootEditorSubscription$,
   Realm
 } from '@mdxeditor/editor'
@@ -48,6 +47,7 @@ export const searchState$ = Cell<SearchState>({
 const SEARCH_HIGHLIGHT_FORMAT: TextFormatType = 'highlight'
 
 // Helper function to split text node with highlighting
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function splitAndHighlightTextNode(
   textNode: TextNode,
   matches: Array<{ startOffset: number; endOffset: number; isCurrent: boolean }>
@@ -360,7 +360,6 @@ export const textSearchPlugin = realmPlugin({
     r.pub(createRootEditorSubscription$, (editor: LexicalEditor) => {
       return editor.registerUpdateListener(({ tags }) => {
         // Only close search if this is NOT a search-related update
-        console.log(tags)
         const isSearchUpdate =
           tags.has('search-apply-highlights') ||
           tags.has('search-clear-highlights') ||

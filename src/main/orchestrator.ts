@@ -7,7 +7,7 @@ import { IpcMainInvokeEvent } from 'electron'
 import { FileLayer } from './fileLayer'
 import { StateLayer } from './stateLayer'
 import { WindowLayer } from './windowLayer'
-import { WindowBounds } from '@shared/types'
+import { Response, WindowBounds } from '@shared/types'
 
 // Dependencies are on the stateLayer and fileLayer
 
@@ -154,17 +154,29 @@ export const Orchestrator = {
     title: string,
     previousTitle: string,
     content: string
-  ) => {
-    if (title === '') return // TODO: Return Error
+  ): Promise<Response> => {
+    if (title === '') return { success: false, error: 'Title Required' }
     console.log(`[ORCHESTRATOR    ] saveNote()`)
 
-    WindowLayer.updateNoteTitle(event, title)
+    if (StateLayer.titleAvailable(title) || title === previousTitle) {
+      WindowLayer.updateNoteTitle(event, title)
 
-    StateLayer.saveNote(event, title, previousTitle)
+      StateLayer.saveNote(event, title, previousTitle)
 
-    await FileLayer.saveNote(title, previousTitle, content)
+      await FileLayer.saveNote(title, previousTitle, content)
 
-    refreshWindowStates()
+      refreshWindowStates()
+
+      return { success: true }
+    } else {
+      console.log(StateLayer.titleAvailable(title))
+      console.log(title === previousTitle)
+      StateLayer.saveNote(event, previousTitle, previousTitle)
+
+      await FileLayer.saveNote(previousTitle, previousTitle, content)
+
+      return { success: false, error: 'Title Already Exists' }
+    }
   },
 
   // Notes

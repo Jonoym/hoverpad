@@ -21,6 +21,7 @@ function Note({ windowInfo }: NoteProps) {
   const [isEditable, setIsEditable] = useState<boolean>(windowInfo.data.editable == 'true')
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
   const [isSaved, setIsSaved] = useState<boolean>(true)
+  const [saveMessage, setSaveMessage] = useState('')
 
   const titleRef = useRef<string>(windowInfo.data.title)
   const previousTitleRef = useRef<string>(windowInfo.data.title)
@@ -37,7 +38,6 @@ function Note({ windowInfo }: NoteProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
-        console.log('Ctrl+S pressed, saving content...')
         saveContent()
       }
     }
@@ -50,6 +50,7 @@ function Note({ windowInfo }: NoteProps) {
   }, [])
 
   const handleTitleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
+    setIsSaved(false)
     if (e.key === 'Enter') {
       setTitleEditable(false)
       const target = e.currentTarget as HTMLInputElement
@@ -58,24 +59,34 @@ function Note({ windowInfo }: NoteProps) {
   }
 
   const saveContent = async () => {
-    console.log(`Attempting to save content for Title: ${titleRef.current}`)
-
-    setIsSaved(true)
-
     if (!titleRef.current || titleRef.current === '') {
+      setIsSaved(true)
+      setSaveMessage('Title Required')
       console.error('Unable to save empty Title')
       return
     }
 
-    window.api.saveContent(titleRef.current, previousTitleRef.current, contentRef.current)
-
-    previousTitleRef.current = titleRef.current
+    window.api
+      .saveContent(titleRef.current, previousTitleRef.current, contentRef.current)
+      .then((response) => {
+        setIsSaved(true)
+        if (response.success) {
+          previousTitleRef.current = titleRef.current
+          setSaveMessage('Saved')
+        } else {
+          setSaveMessage(response.error!)
+        }
+      })
   }
 
   const setContent = (content: string) => (contentRef.current = content)
 
   const debouncedSave = useMemo(() => debounce(saveContent, 1000), [])
   const debouncedSet = useMemo(() => debounce(setContent, 1000), [])
+
+  const saveSucceeded = () => {
+    return saveMessage === 'Saved'
+  }
 
   return (
     <Frame>
@@ -89,12 +100,12 @@ function Note({ windowInfo }: NoteProps) {
               type="text"
               defaultValue={titleRef.current}
               readOnly={!isTitleEditable}
-              className={`transition ${isTitleEditable ? '' : 'input-inactive'}`}
+              className={`transition ${isTitleEditable ? '' : 'input-inactive'} ${saveSucceeded() ? '' : 'title-error'}`}
               onKeyDown={handleTitleKeyDown}
               onBlur={(e) => {
                 titleRef.current = e.target.value
                 setTitleEditable(false)
-                saveContent()
+                debouncedSave()
               }}
             />
           </div>
@@ -114,11 +125,23 @@ function Note({ windowInfo }: NoteProps) {
               className={`centre note-titlebar-option transition pointer save-button`}
             >
               {isSaved ? (
-                <LuCircle className={`note-titlebar-icon transition ${isSaved ? 'saved' : ''}`} />
+                <div className="tooltip-container">
+                  <LuCircle
+                    className={`note-titlebar-icon transition ${isSaved ? 'saved' : ''} ${saveSucceeded() ? '' : 'error'}`}
+                  />
+                  <span
+                    className={`tooltip-text ${saveSucceeded() ? 'tooltip-text-success' : 'tooltip-text-error'}`}
+                  >
+                    {saveMessage}
+                  </span>
+                </div>
               ) : (
-                <LuLoaderCircle
-                  className={`note-titlebar-icon transition ${isSaved ? '' : 'loading'}`}
-                />
+                <div className="tooltip-container">
+                  <LuLoaderCircle
+                    className={`note-titlebar-icon transition ${isSaved ? '' : 'loading'}`}
+                  />
+                  <span className="tooltip-text tooltip-text-neutral">Saving</span>
+                </div>
               )}
             </button>
             <Divider />

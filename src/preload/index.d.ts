@@ -2,27 +2,24 @@
 // Make use of zod
 
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { Response } from '@shared/types'
 
 interface API {
-  changeOpacity(opacity: number): Promise<{ success: boolean; error?: string }>
-  createNote: () => Promise<{ success: boolean; error?: string }>
-  openNote: (title: string) => Promise<{ success: boolean; windowId?: number; error?: string }>
-  deleteNote: (title: string) => Promise<{ success: boolean; error?: string }>
+  changeOpacity(opacity: number): Promise<Response>
+  createNote: () => Promise<Response>
+  openNote: (title: string) => Promise<Response>
+  deleteNote: (title: string) => Promise<Response>
 
-  closeWindow: () => Promise<{ success: boolean; error?: string }>
-  toggleHide: () => Promise<{ success: boolean; error?: string }>
-  toggleEdit: () => Promise<{ success: boolean; error?: string }>
-  toggleExpand: () => Promise<{ success: boolean; error?: string }>
-  requestNotes: () => Promise<{ success: boolean; error?: string }>
+  closeWindow: () => Promise<Response>
+  toggleHide: () => Promise<Response>
+  toggleEdit: () => Promise<Response>
+  toggleExpand: () => Promise<Response>
+  requestNotes: () => Promise<Response>
 
   onToggleEdit: (callback: (editable: boolean) => void) => void
   onNotesList: (callback: (notes: Array<NoteInfo>) => void) => void
   onOpacity: (callback: (opacity: number) => void) => void
-  saveContent: (
-    title: string,
-    previousTitle: string,
-    content: string
-  ) => Promise<{ success: boolean; error?: string }>
+  saveContent: (title: string, previousTitle: string, content: string) => Promise<Response>
 
   getWindowInfo: () => {
     windowType: string

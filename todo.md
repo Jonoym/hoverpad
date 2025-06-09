@@ -1,12 +1,8 @@
 # Features To Add
 
-- [ ] Returns on APIs (file name in use and saving status)              mid prio
+- [X] Returns on APIs (file name in use and saving status)
 - [X] decrease control panel height
 - [X] add hotkeys for opacity changes
-- [ ] text search                               prio
-    - prev/next support
-    - current match highlight 
-    - change highlight on text change
 
 - [X] remove settings
 - [ ] last opened position?                     prio
