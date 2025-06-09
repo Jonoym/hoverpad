@@ -37,16 +37,13 @@ function Editor({ content, setContent, setEditing }: EditorProps) {
         setEditing()
         setContent(e)
       }}
+      spellCheck={false}
       plugins={[
         headingsPlugin(),
         linkPlugin(),
         linkDialogPlugin(),
         quotePlugin(),
         textSearchPlugin(),
-        // highlightPlugin({
-        //   searchTerm: searchTerm,
-        //   highlightColor: 'blue'
-        // }),
         listsPlugin(),
         codeBlockPlugin({ defaultCodeBlockLanguage: 'markdown' }),
         codeMirrorPlugin({

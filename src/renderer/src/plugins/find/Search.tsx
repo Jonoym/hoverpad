@@ -14,6 +14,7 @@ export function SearchUI() {
   const searchRef = useRef<HTMLInputElement>(null)
 
   const [searchTerm, setSearchTerm] = useState('')
+  const [inputVisible, setInputVisibility] = useState(true)
 
   const handleSearch = debounce(
     useCallback(
@@ -28,7 +29,10 @@ export function SearchUI() {
 
   const closeSearch = useCallback(() => {
     performSearch('')
-    toggleVisibility(false)
+    setInputVisibility(false)
+    setTimeout(() => {
+      toggleVisibility(false)
+    }, 200)
   }, [performSearch, toggleVisibility])
 
   useEffect(() => {
@@ -38,9 +42,12 @@ export function SearchUI() {
         if (searchState.isVisible) {
           closeSearch()
         } else {
+          setInputVisibility(true)
           toggleVisibility(true)
           handleSearch(searchTerm)
         }
+      } else if (e.key === 'Escape' && searchState.isVisible) {
+        closeSearch()
       }
     }
 
@@ -68,7 +75,7 @@ export function SearchUI() {
   )
 
   return searchState.isVisible ? (
-    <div className="search-container transition">
+    <div className={`search-container transition ${inputVisible ? '' : 'input-disappear'}`}>
       <input
         ref={searchRef}
         type="text"
@@ -76,6 +83,7 @@ export function SearchUI() {
         onKeyDown={handleKeyDown}
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
+        onBlur={() => closeSearch()}
         autoFocus
       />
       {searchState.matches.length > 0 && (

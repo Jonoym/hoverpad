@@ -12,8 +12,6 @@ import {
   $createRangeSelection,
   $setSelection,
   $getSelection,
-  COMMAND_PRIORITY_LOW,
-  KEY_DOWN_COMMAND,
   type LexicalEditor,
   $createTextNode,
   TextFormatType
@@ -133,7 +131,10 @@ function clearSearchHighlights(editor: LexicalEditor): void {
         }
       })
     },
-    { discrete: true }
+    {
+      discrete: true,
+      tag: 'search-clear-highlights' // Tag for search operations
+    }
   )
 }
 
@@ -159,71 +160,77 @@ export const performSearch$ = Signal<string>((r) => {
     const matches: SearchMatch[] = []
 
     // Use discrete read to prevent interference with ongoing edits
-    editor.update(() => {
-      try {
-        const textNodes = $nodesOfType(TextNode)
-        const nodeMatches = new Map<
-          string,
-          Array<{ startOffset: number; endOffset: number; matchIndex: number }>
-        >()
+    editor.update(
+      () => {
+        try {
+          const textNodes = $nodesOfType(TextNode)
+          const nodeMatches = new Map<
+            string,
+            Array<{ startOffset: number; endOffset: number; matchIndex: number }>
+          >()
 
-        textNodes.forEach((node) => {
-          // Check if node is still attached to the editor
-          if (!node.isAttached()) return
+          textNodes.forEach((node) => {
+            // Check if node is still attached to the editor
+            if (!node.isAttached()) return
 
-          const text = node.getTextContent()
-          if (!text) return
+            const text = node.getTextContent()
+            if (!text) return
 
-          const searchTermLower = searchTerm.toLowerCase()
-          const textLower = text.toLowerCase()
-          const nodeKey = node.getKey()
+            const searchTermLower = searchTerm.toLowerCase()
+            const textLower = text.toLowerCase()
+            const nodeKey = node.getKey()
 
-          let startIndex = 0
-          let matchIndex = textLower.indexOf(searchTermLower, startIndex)
+            let startIndex = 0
+            let matchIndex = textLower.indexOf(searchTermLower, startIndex)
 
-          while (matchIndex !== -1) {
-            matches.push({
-              node,
-              startOffset: matchIndex,
-              endOffset: matchIndex + searchTerm.length,
-              text: text.substring(matchIndex, matchIndex + searchTerm.length)
-            })
+            while (matchIndex !== -1) {
+              matches.push({
+                node,
+                startOffset: matchIndex,
+                endOffset: matchIndex + searchTerm.length,
+                text: text.substring(matchIndex, matchIndex + searchTerm.length)
+              })
 
-            if (!nodeMatches.has(nodeKey)) {
-              nodeMatches.set(nodeKey, [])
+              if (!nodeMatches.has(nodeKey)) {
+                nodeMatches.set(nodeKey, [])
+              }
+
+              nodeMatches.get(nodeKey)?.push({
+                startOffset: matchIndex,
+                endOffset: matchIndex + searchTerm.length,
+                matchIndex: matches.length - 1
+              })
+
+              startIndex = matchIndex + 1
+              matchIndex = textLower.indexOf(searchTermLower, startIndex)
             }
-
-            nodeMatches.get(nodeKey)?.push({
-              startOffset: matchIndex,
-              endOffset: matchIndex + searchTerm.length,
-              matchIndex: matches.length - 1
-            })
-
-            startIndex = matchIndex + 1
-            matchIndex = textLower.indexOf(searchTermLower, startIndex)
-          }
-        })
-
-        // Second pass: apply highlighting
-        for (const [nodeKey, matchesInNode] of nodeMatches) {
-          const node = editor.getEditorState().read(() => {
-            return textNodes.find((n) => n.getKey() === nodeKey)
           })
 
-          if (node && node.isAttached()) {
-            const highlightData = matchesInNode.map((match) => ({
-              startOffset: match.startOffset,
-              endOffset: match.endOffset,
-              isCurrent: match.matchIndex === 0 // First match is current
-            }))
+          // Second pass: apply highlighting
+          for (const [nodeKey, matchesInNode] of nodeMatches) {
+            const node = editor.getEditorState().read(() => {
+              return textNodes.find((n) => n.getKey() === nodeKey)
+            })
 
-            splitAndHighlightTextNode(node, highlightData)
+            if (node && node.isAttached()) {
+              const highlightData = matchesInNode.map((match) => ({
+                startOffset: match.startOffset,
+                endOffset: match.endOffset,
+                isCurrent: match.matchIndex === 0 // First match is current
+              }))
+
+              splitAndHighlightTextNode(node, highlightData)
+            }
           }
+        } catch (error) {
+          console.debug('Search error:', error)
         }
-      } catch (error) {
-        console.debug('Search error:', error)
+      },
+      {
+        discrete: true,
+        tag: 'search-apply-highlights' // Tag for search operations
       }
-    })
+    )
 
     r.pub(searchState$, {
       searchTerm,
@@ -274,7 +281,7 @@ export const navigateToMatch$ = Signal<'next' | 'prev'>((r) => {
         },
         {
           discrete: true, // Prevent this update from being merged with user input
-          tag: 'search-navigation'
+          tag: 'search-navigation' // Tag for search operations
         }
       )
 
@@ -323,78 +330,37 @@ export const toggleSearchVisibility$ = Signal<boolean>((r) => {
   })
 })
 
-// CSS injection for highlighting
-const injectSearchCSS = () => {
-  const existingStyle = document.getElementById('mdx-search-highlight-style')
-  if (existingStyle) return
-
-  const style = document.createElement('style')
-  style.id = 'mdx-search-highlight-style'
-  style.innerHTML = `
-    .text-search {
-      background-color:rgba(59, 111, 255, 0.57) !important;
-      color: #000 !important;
-      padding: 1px 2px !important;
-      border-radius: 2px !important;
-    }
-    
-    .text-search.current-match {
-      background-color:rgba(48, 104, 156, 0.51) !important;
-      animation: pulse 1s ease-in-out;
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.8; }
-    }
-  `
-  document.head.appendChild(style)
-}
-
 // Plugin definition
 export const textSearchPlugin = realmPlugin({
-  init(realm) {
-    // Inject CSS for highlighting
-    injectSearchCSS()
-
+  init(r) {
     // Add the search UI to the editor
-    realm.pubIn({
+    r.pubIn({
       [addComposerChild$]: () => <SearchUI />
     })
 
-    // Register keyboard shortcut (Ctrl+F / Cmd+F)
-    realm.pub(createRootEditorSubscription$, (editor: LexicalEditor) => {
-      return editor.registerCommand(
-        KEY_DOWN_COMMAND,
-        (event: KeyboardEvent) => {
-          if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
-            event.preventDefault()
-            event.stopPropagation()
+    // Listen for editor updates to close search when user types
+    r.pub(createRootEditorSubscription$, (editor: LexicalEditor) => {
+      return editor.registerUpdateListener(({ tags }) => {
+        // Only close search if this is NOT a search-related update
+        const isSearchUpdate =
+          tags.has('search-apply-highlights') ||
+          tags.has('search-clear-highlights') ||
+          tags.has('search-navigation')
 
-            // Use discrete update to prevent interference with text input
-            editor.update(
-              () => {
-                // Don't modify selection or content, just trigger UI
-                realm.pub(toggleSearchVisibility$, true)
-              },
-              {
-                discrete: true,
-                tag: 'search-toggle'
-              }
-            )
-
-            return true
+        if (!isSearchUpdate) {
+          const state = r.getValue(searchState$)
+          if (state.isVisible) {
+            // Clear highlights and close search
+            // clearSearchHighlights(editor)
+            console.log($getSelection())
           }
-          return false
-        },
-        COMMAND_PRIORITY_LOW
-      )
+        }
+      })
     })
 
     // Handle search state changes with debouncing
     let searchTimeout: NodeJS.Timeout
-    realm.sub(searchState$, (state) => {
+    r.sub(searchState$, (state) => {
       // Clear existing timeout
       if (searchTimeout) {
         clearTimeout(searchTimeout)
