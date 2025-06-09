@@ -2,7 +2,7 @@
   -webkit-app-region: drag;
   width: calc(100% - 2px);
   margin: var(--padding-medium);
-  padding: var(--padding-medium);
+  padding: var(--padding-small);
   border-radius: var(--border-radius-large);
   background-color: var(--bg-titlebar);
   border: var(--border-size) solid var(--color-border);
@@ -22,7 +22,7 @@
   -webkit-app-region: none;
   padding: var(--padding-small) var(--padding-medium);
   margin-right: var(--padding-medium);
-  border-radius: var(--border-radius-small);
+  border-radius: var(--border-radius-medium);
   font-size: var(--font-size-normal);
   font-weight: var(--font-weight-heavy);
   font-family: var(--font-primary);
@@ -78,7 +78,7 @@
   height: 30px;
   color: var(--color-text);
   font-size: var(--font-size-small);
-  border-radius: var(--border-radius-large);
+  border-radius: var(--border-radius-medium);
   padding: var(--padding-small);
   -webkit-app-region: none;
 }
@@ -102,12 +102,12 @@
 
 .save-button .saved {
   opacity: 0;
-  color: rgb(95, 182, 95);
+  color: var(--color-light-green);
   animation: fade-in 0.5s ease-in-out forwards;
 }
 
 .save-button:hover .saved {
-  color: rgb(95, 182, 95);
+  color: var(--color-light-green);
 }
 
 .save-button .loading {

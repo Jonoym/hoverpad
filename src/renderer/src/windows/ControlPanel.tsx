@@ -2,18 +2,19 @@ import { useEffect } from 'react'
 import Frame from '../components/Frame'
 import './ControlPanel.css'
 import {
+  LuGripVertical,
   LuPencil,
   LuPencilOff,
   LuEye,
   LuSunMoon,
-  LuClipboardPlus,
   LuFileStack,
   LuChevronUp,
-  LuX
+  LuX,
+  LuFilePlus
 } from 'react-icons/lu'
 import { useState } from 'react'
 import Divider from '../components/Divider'
-import { handleClose } from '@renderer/functions'
+import { createNote, handleClose } from '@renderer/functions'
 import { Catalogue } from '@renderer/components'
 import { NoteDetails } from '@shared/types'
 
@@ -58,10 +59,6 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
     window.api.changeOpacity(value / 100)
   }
 
-  const createNote = (): void => {
-    window.api.createNote()
-  }
-
   const toggleEdit = (): void => {
     window.api.toggleEdit()
   }
@@ -86,6 +83,9 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
     >
       <div className="control-panel-window">
         <div className={`control-panel spaced`}>
+          <div className="centre control-panel-drag transition">
+            <LuGripVertical className="control-panel-icon transition" />
+          </div>
           <div className="control-panel-container centre">
             <button
               className={`centre control-panel-option no-drag transition pointer ${isEditable ? 'control-panel-option-active' : 'control-panel-option-inactive'}`}
@@ -109,7 +109,6 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
             >
               <LuEye className="control-panel-icon transition" />
               <span className="centre container key transition">
-                {' '}
                 <LuChevronUp className="control-panel-icon transition" />
               </span>
               <span>+</span>
@@ -135,7 +134,7 @@ function ControlPanel({ windowInfo }: ControlPanelProps) {
               className="centre control-panel-option no-drag transition pointer"
               onClick={createNote}
             >
-              <LuClipboardPlus className="control-panel-icon transition" />
+              <LuFilePlus className="control-panel-icon transition" />
               <span className="centre container key transition">
                 {' '}
                 <LuChevronUp className="control-panel-icon transition" />

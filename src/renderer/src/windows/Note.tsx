@@ -49,7 +49,7 @@ function Note({ windowInfo }: NoteProps) {
     }
   }, [])
 
-  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+  const handleTitleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>): Promise<void> => {
     if (e.key === 'Enter') {
       setTitleEditable(false)
       const target = e.currentTarget as HTMLInputElement
@@ -57,7 +57,7 @@ function Note({ windowInfo }: NoteProps) {
     }
   }
 
-  const saveContent = () => {
+  const saveContent = async () => {
     console.log(`Attempting to save content for Title: ${titleRef.current}`)
 
     setIsSaved(true)
@@ -72,7 +72,10 @@ function Note({ windowInfo }: NoteProps) {
     previousTitleRef.current = titleRef.current
   }
 
+  const setContent = (content: string) => (contentRef.current = content)
+
   const debouncedSave = useMemo(() => debounce(saveContent, 1000), [])
+  const debouncedSet = useMemo(() => debounce(setContent, 1000), [])
 
   return (
     <Frame>
@@ -131,7 +134,7 @@ function Note({ windowInfo }: NoteProps) {
           <Editor
             content={windowInfo.data.content}
             setContent={(content) => {
-              contentRef.current = content
+              debouncedSet(content)
               debouncedSave()
             }}
             setEditing={() => setIsSaved(false)}

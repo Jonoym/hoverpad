@@ -31,7 +31,7 @@ const api = {
   toggleExpand: () => ipcRenderer.invoke(TOGGLE_EXPAND),
 
   // File APIs
-  saveContent: (title: string, previousTitle: string, content: string) =>
+  saveContent: async (title: string, previousTitle: string, content: string) =>
     ipcRenderer.invoke(SAVE_NOTE, title, previousTitle, content),
   requestNotes: () => ipcRenderer.invoke(REFRESH_NOTES),
 

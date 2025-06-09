@@ -1,17 +1,28 @@
 .note-catalogue {
-  height: 440px;
+  height: 250px;
   width: calc(100% - 2 * var(--padding-medium));
-  margin: var(--padding-medium);
-  padding: var(--padding-medium);
+  margin: var(--padding-small);
+  padding: var(--padding-small);
   -webkit-user-drag: none;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .note-catalogue-header {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: var(--padding-large)
+}
+
+.note-catalogue-header input {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-heavy);
+  margin-top: var(--padding-medium);
+  padding: var(--padding-medium) var(--padding-large);
+  background: var(--color-space-grey-200);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--border-radius-medium)
 }
 
 .note-catalogue-tags {
@@ -37,23 +48,25 @@
   padding: 0 var(--padding-medium);
   display: flex;
   flex-direction: column;
-  align-items: center;  
-}
-
-.note-section-header {
-  width: 100%;
+  align-items: center;
 }
 
 .note-section-grid {
-  padding: var(--padding-large) 0;
-  margin-bottom: var(--padding-large);
+  height: 54px;
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  padding: var(--padding-medium) 0;
+  margin-bottom: var(--padding-medium);
+  display: flex;
+  align-items: center;
+  overflow-y: hidden;
+  overflow-x: scroll;
   gap: var(--gapsize);
 }
 
 .note-section-grid .note-button {
+  transition: var(--transition-default);
+  flex-shrink: 0;
+  overflow: clip;
   font: var(--font-primary);
   box-shadow: var(--shadow-default);
   color: var(--color-text);
@@ -61,29 +74,109 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--padding-large);
+  padding: var(--padding-small);
   border-radius: var(--border-radius-large);
   border: var(--border-size) solid var(--color-border);
-  height: 40px;
-  font-size: var(--font-size-normal);
   cursor: pointer;
 }
 
+.note-section-grid .note-button-active {
+  background: var(--color-button-primary);
+  color: var(--color-text-bright);
+  border: var(--border-size) solid var(--color-border-active);
+}
+
+.note-section-grid .note-button-visible {
+  animation: appear 0.3s forwards ease-in;
+}
+
+.note-section-grid .note-button-invisible {
+  animation: disappear 0.3s forwards ease-in;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    width: 0px;
+    border: 0px;
+  }
+  50% {
+    opacity: 0;
+    width: 150px;
+    border: var(--border-size) solid var(--color-border-active);
+  }
+  to {
+    border: var(--border-size) solid var(--color-border-active);
+    opacity: 1;
+    width: 150px;
+  }
+}
+
+@keyframes disappear {
+  from {
+  border: var(--border-size) solid var(--color-border-active);
+  opacity: 1;
+  width: 150px;
+  }
+  50% {
+    opacity: 0;
+    width: 150px;
+    border: var(--border-size) solid var(--color-border-active);
+  }
+  to {
+    display: none;
+    opacity: 0;
+    width: 0px;
+    border: 0px;
+  }
+}
+
 .note-section-grid .note-button:hover {
-   background: var(--bg-hover);
+  background: var(--bg-hover);
+}
+
+.note-section-grid .note-button:hover .note-button-label {
+  color: var(--color-text-bright);
+}
+
+.note-section-grid::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.note-section::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.note-section::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.note-section::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.note-section-header {
+  width: 100%;
 }
 
 .note-button-label {
   font: var(--font-primary);
   font-size: var(--font-size-normal);
   color: var(--color-text);
-  margin-left: var(--padding-medium);
+  margin: 0 var(--padding-medium);
+}
+
+.note-button-label-active {
+  color: var(--color-text-bright);
 }
 
 .note-button-option {
   border-radius: var(--border-radius-medium);
   color: var(--color-text-disabled);
-  padding: var(--padding-small);
+  padding: var(--padding-medium);
   border: none;
   background: transparent;
 }
@@ -92,7 +185,6 @@
   color: var(--color-text-bright);
   background: var(--bg-hover);
 }
-
 
 .note-button-option:hover .note-button-icon {
   color: var(--color-red-strong);

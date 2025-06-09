@@ -16,15 +16,15 @@ import { join } from 'path'
 import { appState } from './state'
 let nextWindowId = 1
 export const CONTROL_PANEL_CLOSED: WindowBounds = {
-  width: 700,
-  height: 45,
+  width: 680,
+  height: 53,
   x: 100,
   y: 100
 }
 
 export const CONTROL_PANEL_OPEN: WindowBounds = {
-  width: 700,
-  height: 500,
+  width: 680,
+  height: 280,
   x: 100,
   y: 100
 }
@@ -210,6 +210,8 @@ export const WindowLayer = {
       y: bounds ? bounds.y : undefined,
       width: bounds ? bounds.width : 400,
       height: bounds ? bounds.height : 500,
+      minWidth: 300,
+      minHeight: 300,
       frame: false,
       transparent: true,
       alwaysOnTop: true,

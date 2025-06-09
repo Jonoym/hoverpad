@@ -10,7 +10,7 @@
 
 .control-frame-closed {
   height: 45px;
-  align-items:start;
+  align-items: start;
   justify-content: start;
 }
 
@@ -28,7 +28,6 @@
   font-weight: var(--font-weight-heavy);
   width: 30px;
   height: 26px;
-  background-color: var(--bg-frame-active);
   border: var(--border-size) solid var(--color-border);
   box-shadow: var(--shadow-default);
   border-radius: var(--border-radius-large);
@@ -37,6 +36,14 @@
 .control-panel-container {
   height: 100%;
   gap: var(--gapsize);
+}
+
+.control-panel-drag {
+  height: 34px;
+  color: var(--color-text);
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .control-panel-option {
@@ -51,7 +58,7 @@
 }
 
 .control-panel-icon {
-  font-size: var(--icon-small);
+  font-size: var(--icon-large);
   color: var(--color-text);
 }
 
@@ -86,6 +93,10 @@
 
 .pointer {
   cursor: pointer;
+}
+
+.move {
+  cursor: move;
 }
 
 .slider-container {

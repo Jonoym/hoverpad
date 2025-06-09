@@ -31,6 +31,7 @@
   border-radius: var(--border-radius-small);
   padding: var(--padding-small) var(--padding-small);
   color: var(--color-text-code);
+  background-color: var(--bg-editor);
 }
 
 .mdxeditor-root-contenteditable blockquote {
@@ -60,6 +61,20 @@
   padding: 0;
   margin-top: var(--padding-large);
   margin-bottom: var(--padding-large);
+}
+
+.mdxeditor-toolbar svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mdxeditor-toolbar {
+    padding: var(--padding-small);
+    gap: 0;
+}
+
+.mdxeditor button {
+  padding: var(--padding-medium);
 }
 
 .cm-gutterElement {
@@ -116,11 +131,11 @@ div[aria-label='editable markdown'] {
   transition: var(--transition-default);
 }
 
-[class*='toolbarToggleItem'][data-state='on'] {
+[class*='toolbarToggleItem'][data-state='on'], [class*='toolbarToggleItem'][data-state='on']:hover {
   background: var(--bg-editor-active);
 }
 
-[class*='toggleGroupRoot'] button[data-state='on'] {
+[class*='toggleGroupRoot'] button[data-state='on'], [class*='toggleGroupRoot'] button:hover {
     background: var(--bg-hover);
 }
 
@@ -165,7 +180,8 @@ div[aria-label='editable markdown'] {
   border-radius: var(--border-radius-large);
   width: fit-content;
   margin: 0 var(--padding-medium);
-  padding: var(--padding-medium) var(--padding-large);
+  padding: var(--padding-small) var(--padding-small);
+  padding-left: var(--padding-medium);
 }
 
 [class*='tableColumnEditorToolbar'] button,
@@ -175,18 +191,24 @@ div[aria-label='editable markdown'] {
   border-radius: var(--border-radius-medium);
 }
 
+[class*='tableColumnEditorToolbar'] button svg,
+[class*='linkDialogPopoverContent'] button svg{
+  height: var(--icon-large);
+  width: var(--icon-large);
+  color: var(--color-text);
+}
+
 [class*='tableColumnEditorToolbar'] button:hover,
 [class*='linkDialogPopoverContent'] button:hover {
   background-color: var(--bg-hover);
 }
 
 [class*='linkDialogPopoverContent'] a {
-  color: var(--color-link-modal);
+  color: var(--color-text);
 }
 
 [class*='linkDialogPreviewAnchor'] svg {
-  margin-left: var(--padding-small);
-  width: 16px;
+  display: none;
 }
 
 [class*='tableEditor'] {

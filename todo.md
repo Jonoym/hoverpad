@@ -1,20 +1,27 @@
 # Features To Add
 
-- [ ] Returns on APIs (file name in use and saving status)
-- [ ] Fix issue with changing to edit and not being able to update 
+- [ ] Returns on APIs (file name in use and saving status)              mid prio
 - [X] decrease control panel height
 - [X] add hotkeys for opacity changes
-- [ ] text search
+- [ ] text search                               prio
+    - prev/next support
+    - current match highlight 
+    - change highlight on text change
+
 - [X] remove settings
-- [ ] last opened position?
+- [ ] last opened position?                     prio
 - [X] follow mac focus screen
 - [X] visible on full screen
 - [X] prevent alt-tabbing
-- [ ] decrease notepad size
-- [ ] opacity hotkey guide
-- [ ] images
+- [X] decrease notepad size
+- [ ] images                                    low prio
+- [ ] board                                     low prio
+- [X] fix colors                                
+- [X] fix sizing for popup and hovers           high prio
+- [X] search notes                              high prio
+- [ ] new logo
 
-- [ ] fix preview section
+- [ ] fix preview section hover
 - [ ] highlight on opened ones
 
 ## Overall
