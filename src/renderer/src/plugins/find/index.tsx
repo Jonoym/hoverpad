@@ -15,7 +15,7 @@ import {
   $getSelection,
   type LexicalEditor,
   $createTextNode,
-  TextFormatType,
+  TextFormatType
 } from 'lexical'
 import { SearchUI } from './Search'
 

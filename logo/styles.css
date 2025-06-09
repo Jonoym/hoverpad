@@ -11,7 +11,7 @@ body {
 
     --overlay-100: rgba(21, 14, 88, 0.8);
     --overlay-200: rgba(62, 87, 146, 0.8);
-    --overlay-300: rgba(90, 135, 207, 0.8);
+    --overlay-300: rgba(119, 163, 233, 0.8);
     --overlay-400: rgba(56, 78, 174, 0.8);
     --overlay-500: rgba(23, 17, 119, 0.8);
 }
@@ -49,7 +49,7 @@ body {
     position: absolute;
     width: 18%;
     height: 24%;
-    background: linear-gradient(45deg, var(--overlay-200), var(--overlay-400));
+    background: linear-gradient(45deg, var(--overlay-200), var(--overlay-300), var(--overlay-400));
     border-radius: calc(0.05 * var(--size));
     /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgba(59, 79, 138, 0.886); */
 }
@@ -59,7 +59,7 @@ body {
     position: absolute;
     width: 50%;
     height: 23%;
-    background: linear-gradient(45deg, var(--overlay-100), var(--overlay-200), var(--overlay-400));
+    background: linear-gradient(45deg, var(--overlay-100), var(--overlay-200), var(--overlay-300), var(--overlay-400));
     border-radius: calc(0.05 * var(--size));
     /* box-shadow: calc(0.007 * var(--size)) calc(0.007 * var(--size)) 0 rgba(59, 79, 138, 0.886); */
 }

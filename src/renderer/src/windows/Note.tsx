@@ -21,7 +21,7 @@ function Note({ windowInfo }: NoteProps) {
   const [isEditable, setIsEditable] = useState<boolean>(windowInfo.data.editable == 'true')
   const [isTitleEditable, setTitleEditable] = useState<boolean>(false)
   const [isSaved, setIsSaved] = useState<boolean>(true)
-  const [saveMessage, setSaveMessage] = useState('')
+  const [saveMessage, setSaveMessage] = useState('Saved')
 
   const titleRef = useRef<string>(windowInfo.data.title)
   const previousTitleRef = useRef<string>(windowInfo.data.title)
