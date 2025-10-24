@@ -32,3 +32,17 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+This is 
+some
+new
+lines
+that
+I
+want
+to
+add
+to
+test
+some
+events
